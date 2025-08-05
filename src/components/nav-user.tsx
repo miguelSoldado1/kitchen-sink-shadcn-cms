@@ -9,17 +9,22 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { signOut, useSession } from "@/lib/auth/auth-client";
-import { ChevronsUpDown, GalleryVerticalEndIcon, LogOut } from "lucide-react";
+import { ChevronsUpDown, GalleryVerticalEndIcon, LogOutIcon, Monitor, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import { Skeleton } from "./ui/skeleton";
 
 export function NavUser() {
   const router = useRouter();
   const { isMobile } = useSidebar();
   const { data } = useSession();
+  const { setTheme } = useTheme();
 
   async function handleSignOut() {
     const { error } = await signOut();
@@ -77,8 +82,29 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="gap-2">
+                <Sun className="text-muted-foreground size-4 dark:hidden" />
+                <Moon className="text-muted-foreground hidden size-4 dark:block" />
+                Change theme
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem onClick={() => setTheme("light")}>
+                  <Sun />
+                  Light
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                  <Moon />
+                  Dark
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("system")}>
+                  <Monitor />
+                  System
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
             <DropdownMenuItem onClick={handleSignOut}>
-              <LogOut />
+              <LogOutIcon />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
