@@ -47,9 +47,9 @@ export function SignUpForm() {
         </a>
         <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
         <div className="text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <a href="/sign-up" className="underline underline-offset-4">
-            Sign up
+          Already have an account{" "}
+          <a href="/sign-in" className="underline underline-offset-4">
+            Sign in
           </a>
         </div>
       </div>
