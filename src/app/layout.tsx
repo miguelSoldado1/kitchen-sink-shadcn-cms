@@ -1,8 +1,7 @@
+import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
 
 import "./globals.css";
-
-import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Acme Inc.",
