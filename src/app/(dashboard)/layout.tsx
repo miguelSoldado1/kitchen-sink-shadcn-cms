@@ -13,18 +13,32 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { ShoppingBasketIcon, UserIcon } from "lucide-react";
+import { PackageIcon, ShoppingBasketIcon, ShoppingCartIcon, TagIcon, UserIcon } from "lucide-react";
 import Provider from "../_trpc/provider";
 
 const navigationData = [
   {
-    title: "Users",
-    url: "/user",
+    title: "Customers",
+    url: "#",
     icon: UserIcon,
     isActive: false,
+    items: [
+      {
+        title: "Customer List",
+        url: "/customers",
+      },
+      {
+        title: "Customer Groups",
+        url: "/customer-groups",
+      },
+      {
+        title: "Reviews",
+        url: "/reviews",
+      },
+    ],
   },
   {
-    title: "Product",
+    title: "Catalog",
     url: "#",
     icon: ShoppingBasketIcon,
     isActive: false,
@@ -34,12 +48,80 @@ const navigationData = [
         url: "/product",
       },
       {
+        title: "Categories",
+        url: "/categories",
+      },
+      {
+        title: "Brands",
+        url: "/brands",
+      },
+      {
+        title: "Attributes",
+        url: "/attributes",
+      },
+      {
         title: "Variants",
         url: "/productVariant",
       },
+    ],
+  },
+  {
+    title: "Orders",
+    url: "#",
+    icon: ShoppingCartIcon,
+    isActive: false,
+    items: [
       {
-        title: "Offers",
-        url: "/offerPrice",
+        title: "All Orders",
+        url: "/orders",
+      },
+      {
+        title: "Returns",
+        url: "/returns",
+      },
+    ],
+  },
+  {
+    title: "Marketing",
+    url: "#",
+    icon: TagIcon,
+    isActive: false,
+    items: [
+      {
+        title: "Discounts",
+        url: "/discounts",
+      },
+      {
+        title: "Promotions",
+        url: "/promotions",
+      },
+      {
+        title: "Campaigns",
+        url: "/campaigns",
+      },
+      {
+        title: "SEO",
+        url: "/seo",
+      },
+    ],
+  },
+  {
+    title: "Inventory",
+    url: "#",
+    icon: PackageIcon,
+    isActive: false,
+    items: [
+      {
+        title: "Stock Levels",
+        url: "/inventory",
+      },
+      {
+        title: "Warehouses",
+        url: "/warehouses",
+      },
+      {
+        title: "Movements",
+        url: "/inventory-movements",
       },
     ],
   },
@@ -70,7 +152,6 @@ function getCurrentPageInfo(pathname: string) {
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-
   const pageInfo = getCurrentPageInfo(pathname);
 
   return (
