@@ -14,6 +14,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { ShoppingBasketIcon, UserIcon } from "lucide-react";
+import Provider from "../_trpc/provider";
 
 const navigationData = [
   {
@@ -105,7 +106,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             </Breadcrumb>
           </div>
         </header>
-        {children}
+        <Provider>{children}</Provider>
       </SidebarInset>
     </SidebarProvider>
   );
