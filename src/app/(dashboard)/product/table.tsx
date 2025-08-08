@@ -2,7 +2,9 @@
 
 import { trpc } from "@/app/_trpc/client";
 import { DataTable } from "@/components/data-table/data-table";
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
+import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,18 +36,19 @@ function currency(value: number) {
 const columns: ColumnDef<typeof product.$inferSelect>[] = [
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
+    enableMultiSort: false,
     meta: {
       label: "Name",
       variant: "text",
       placeholder: "Search name…",
     },
-    enableSorting: true,
+    enableSorting: false,
     enableColumnFilter: true,
   },
   {
     accessorKey: "price",
-    header: "Price",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
     cell: ({ getValue }) => currency(getValue<number>()),
     meta: {
       label: "Price",
@@ -53,33 +56,34 @@ const columns: ColumnDef<typeof product.$inferSelect>[] = [
       unit: "$",
       range: [0, 1000],
     },
-    enableSorting: true,
+    enableSorting: false,
     enableColumnFilter: true,
   },
   {
     accessorKey: "sku",
-    header: "Sku",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Sku" />,
+    enableSorting: false,
   },
   {
     accessorKey: "createdAt",
-    header: "Created Date",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Created Date" />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     meta: {
       label: "Created",
       variant: "date",
     },
-    enableSorting: true,
+    enableSorting: false,
     enableColumnFilter: true,
   },
   {
     accessorKey: "updatedAt",
-    header: "Updated Date",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Updated Date" />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     meta: {
       label: "Updated",
       variant: "date",
     },
-    enableSorting: true,
+    enableSorting: false,
     enableColumnFilter: true,
   },
   {
@@ -125,7 +129,7 @@ export function ProductTable({ page, perPage }: ProductTableProps) {
     shallow: false,
     initialState: {
       pagination: {
-        pageIndex: page - 1, // Convert 1-based page to 0-based pageIndex
+        pageIndex: page,
         pageSize: perPage,
       },
     },
@@ -135,17 +139,19 @@ export function ProductTable({ page, perPage }: ProductTableProps) {
     return (
       <DataTableSkeleton
         columnCount={6}
-        withViewOptions={false}
         cellWidths={["15rem", "10rem", "8rem", "8rem", "8rem", "10rem"]}
         shrinkZero
-        filterCount={3}
+        filterCount={4}
+        rowCount={10}
       />
     );
   }
 
   return (
     <DataTable table={table}>
-      <DataTableToolbar table={table}>{/* <DataTableSortList table={table} /> */}</DataTableToolbar>
+      <DataTableToolbar table={table}>
+        <DataTableSortList table={table} />
+      </DataTableToolbar>
     </DataTable>
   );
 }
