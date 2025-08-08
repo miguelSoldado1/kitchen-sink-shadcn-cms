@@ -13,30 +13,10 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { PackageIcon, ShoppingBasketIcon, ShoppingCartIcon, TagIcon, UserIcon } from "lucide-react";
+import { ShoppingBasketIcon } from "lucide-react";
 import Provider from "../_trpc/provider";
 
 const navigationData = [
-  {
-    title: "Customers",
-    url: "#",
-    icon: UserIcon,
-    isActive: false,
-    items: [
-      {
-        title: "Customer List",
-        url: "/customers",
-      },
-      {
-        title: "Customer Groups",
-        url: "/customer-groups",
-      },
-      {
-        title: "Reviews",
-        url: "/reviews",
-      },
-    ],
-  },
   {
     title: "Catalog",
     url: "#",
@@ -46,82 +26,6 @@ const navigationData = [
       {
         title: "Products",
         url: "/product",
-      },
-      {
-        title: "Categories",
-        url: "/categories",
-      },
-      {
-        title: "Brands",
-        url: "/brands",
-      },
-      {
-        title: "Attributes",
-        url: "/attributes",
-      },
-      {
-        title: "Variants",
-        url: "/productVariant",
-      },
-    ],
-  },
-  {
-    title: "Orders",
-    url: "#",
-    icon: ShoppingCartIcon,
-    isActive: false,
-    items: [
-      {
-        title: "All Orders",
-        url: "/orders",
-      },
-      {
-        title: "Returns",
-        url: "/returns",
-      },
-    ],
-  },
-  {
-    title: "Marketing",
-    url: "#",
-    icon: TagIcon,
-    isActive: false,
-    items: [
-      {
-        title: "Discounts",
-        url: "/discounts",
-      },
-      {
-        title: "Promotions",
-        url: "/promotions",
-      },
-      {
-        title: "Campaigns",
-        url: "/campaigns",
-      },
-      {
-        title: "SEO",
-        url: "/seo",
-      },
-    ],
-  },
-  {
-    title: "Inventory",
-    url: "#",
-    icon: PackageIcon,
-    isActive: false,
-    items: [
-      {
-        title: "Stock Levels",
-        url: "/inventory",
-      },
-      {
-        title: "Warehouses",
-        url: "/warehouses",
-      },
-      {
-        title: "Movements",
-        url: "/inventory-movements",
       },
     ],
   },
@@ -157,9 +61,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <SidebarProvider>
       <AppSidebar navigationData={navigationData} />
-      <SidebarInset>
+      <SidebarInset className="px-4">
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-4">
+          <div className="flex items-center gap-2">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb>

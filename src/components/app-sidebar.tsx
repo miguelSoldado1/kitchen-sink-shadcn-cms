@@ -40,7 +40,7 @@ export function AppSidebar({ navigationData = [], ...props }: AppSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <div className="text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
                   <GalleryVerticalEndIcon className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">

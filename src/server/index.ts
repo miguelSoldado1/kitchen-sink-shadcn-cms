@@ -1,6 +1,7 @@
 import { db } from "@/lib/database/drizzle";
 import * as schema from "@/lib/database/schema";
 import { count, gte } from "drizzle-orm";
+import z from "zod";
 import { publicProcedure, router } from "./trpc";
 
 export const appRouter = router({
@@ -25,6 +26,21 @@ export const appRouter = router({
       },
     };
   }),
+  getTableProducts: publicProcedure
+    .input(z.object({ page: z.number().min(1).default(1), limit: z.number().min(1).max(100).default(10) }))
+    .query(async ({ input }) => {
+      const offset = (input.page - 1) * input.limit;
+
+      const [products, totalCount] = await Promise.all([
+        db.select().from(schema.product).limit(input.limit).offset(offset),
+        db.select({ count: count() }).from(schema.product),
+      ]);
+
+      return {
+        products: products,
+        pageCount: Math.ceil(totalCount[0].count / input.limit),
+      };
+    }),
 });
 
 export type AppRouter = typeof appRouter;

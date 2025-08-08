@@ -1,9 +1,9 @@
-import { decimal, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { decimal, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 export * from "../auth/auth-schema";
 
 export const product = pgTable("product", {
-  id: text("id").primaryKey(),
+  id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
   sku: text("sku").unique().notNull(),
@@ -15,3 +15,5 @@ export const product = pgTable("product", {
     .$defaultFn(() => new Date())
     .notNull(),
 });
+
+export type Product = typeof product.$inferSelect;
