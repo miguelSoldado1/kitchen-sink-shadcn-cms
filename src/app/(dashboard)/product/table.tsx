@@ -125,7 +125,7 @@ export function ProductTable({ page, perPage }: ProductTableProps) {
     shallow: false,
     initialState: {
       pagination: {
-        pageIndex: page,
+        pageIndex: page - 1, // Convert 1-based page to 0-based pageIndex
         pageSize: perPage,
       },
     },

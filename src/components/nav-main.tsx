@@ -10,7 +10,6 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
 import { ChevronRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -19,7 +18,6 @@ interface NavMainProps {
     title: string;
     url: string;
     icon?: LucideIcon;
-    isActive?: boolean;
     items?: {
       title: string;
       url: string;
@@ -30,18 +28,21 @@ interface NavMainProps {
 export function NavMain({ items }: NavMainProps) {
   const pathname = usePathname();
 
+  console.log(pathname);
+
   return (
     <SidebarMenu className="p-2">
       {items.map((item) => (
         <SidebarMenuItem key={item.title}>
           {item.items && item.items.length > 0 ? (
-            <Collapsible asChild defaultOpen={item.isActive} className="group/collapsible">
+            <Collapsible
+              asChild
+              defaultOpen={item.items.some((subItem) => subItem.url === pathname)}
+              className="group/collapsible"
+            >
               <div>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton
-                    className={cn("cursor-pointer", pathname === item.url && "bg-muted")}
-                    tooltip={item.title}
-                  >
+                  <SidebarMenuButton className="cursor-pointer" tooltip={item.title}>
                     {item.icon && <item.icon />}
                     <span>{item.title}</span>
                     <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -63,7 +64,7 @@ export function NavMain({ items }: NavMainProps) {
               </div>
             </Collapsible>
           ) : (
-            <SidebarMenuButton tooltip={item.title} asChild>
+            <SidebarMenuButton tooltip={item.title} asChild className="!bg-red-500 hover:!bg-red-600">
               <a href={item.url}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
