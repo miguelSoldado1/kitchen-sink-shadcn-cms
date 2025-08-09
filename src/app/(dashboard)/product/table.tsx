@@ -23,18 +23,9 @@ function currency(value: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value);
 }
 
-// const categoryOptions = [
-//   { label: "Electronics", value: "Electronics" },
-//   { label: "Accessories", value: "Accessories" },
-//   { label: "Home", value: "Home" },
-//   { label: "Outdoors", value: "Outdoors" },
-//   { label: "Apparel", value: "Apparel" },
-//   { label: "Stationery", value: "Stationery" },
-//   { label: "Fitness", value: "Fitness" },
-// ];
-
 const columns: ColumnDef<typeof product.$inferSelect>[] = [
   {
+    id: "name",
     accessorKey: "name",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
     enableMultiSort: false,
@@ -47,6 +38,7 @@ const columns: ColumnDef<typeof product.$inferSelect>[] = [
     enableColumnFilter: true,
   },
   {
+    id: "price",
     accessorKey: "price",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
     cell: ({ getValue }) => currency(getValue<number>()),
@@ -60,30 +52,34 @@ const columns: ColumnDef<typeof product.$inferSelect>[] = [
     enableColumnFilter: true,
   },
   {
+    id: "sku",
     accessorKey: "sku",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Sku" />,
+    meta: { label: "Sku" },
     enableSorting: false,
   },
   {
+    id: "createdAt",
     accessorKey: "createdAt",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Created Date" />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     meta: {
-      label: "Created",
+      label: "Created date",
       variant: "date",
     },
-    enableSorting: false,
+    enableSorting: true,
     enableColumnFilter: true,
   },
   {
+    id: "updatedAt",
     accessorKey: "updatedAt",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Updated Date" />,
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     meta: {
-      label: "Updated",
+      label: "Updated date",
       variant: "date",
     },
-    enableSorting: false,
+    enableSorting: true,
     enableColumnFilter: true,
   },
   {
@@ -111,31 +107,13 @@ const columns: ColumnDef<typeof product.$inferSelect>[] = [
   },
 ];
 
-interface ProductTableProps {
-  page: number;
-  perPage: number;
-}
-
-export function ProductTable({ page, perPage }: ProductTableProps) {
-  const { data, isPending, isPlaceholderData } = trpc.getTableProducts.useQuery(
-    { page, limit: perPage },
-    { placeholderData: (previousData) => previousData },
-  );
-
-  const { table } = useDataTable({
-    data: data?.products ?? [],
-    pageCount: data?.pageCount ?? 0,
-    columns: columns,
-    shallow: false,
-    initialState: {
-      pagination: {
-        pageIndex: page,
-        pageSize: perPage,
-      },
-    },
+export function ProductTable() {
+  const { table, query } = useDataTable({
+    queryFn: (props) => trpc.getTableProducts.useQuery(props, { placeholderData: (previousData) => previousData }),
+    columns,
   });
 
-  if (isPending && !isPlaceholderData) {
+  if (query.isPending && !query.isPlaceholderData) {
     return (
       <DataTableSkeleton
         columnCount={6}

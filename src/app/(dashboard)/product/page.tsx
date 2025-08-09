@@ -1,17 +1,9 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { loadSearchParams } from "./search-params";
 import { ProductTable } from "./table";
-import type { SearchParams } from "nuqs/server";
 
-interface ProductPageProps {
-  searchParams: Promise<SearchParams>;
-}
-
-export default async function ProductPage({ searchParams }: ProductPageProps) {
-  const { page, perPage } = await loadSearchParams(searchParams);
-
+export default function ProductPage() {
   return (
     <main className="flex-1 space-y-4 p-4 pt-6 md:px-6 md:py-8">
       <header className="flex items-center justify-between space-y-2">
@@ -29,7 +21,7 @@ export default async function ProductPage({ searchParams }: ProductPageProps) {
         </div>
       </header>
       <section aria-label="Product data table">
-        <ProductTable page={page} perPage={perPage} />
+        <ProductTable />
       </section>
     </main>
   );
