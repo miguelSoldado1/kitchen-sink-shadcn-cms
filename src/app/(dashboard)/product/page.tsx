@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { PageHeader, PageLayout } from "@/components/page-layout";
+import { ProductTable } from "@/components/product/product-table";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { ProductTable } from "./product-table";
 
 const TITLE = "Products";
 const DESCRIPTION = "Manage and view all your products in one place.";

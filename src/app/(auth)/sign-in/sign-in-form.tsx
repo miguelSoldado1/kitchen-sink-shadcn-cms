@@ -31,7 +31,7 @@ export function SignInForm() {
       return toast.error(error.message || "An error occurred while signing in.");
     }
 
-    router.push("/");
+    router.push("/product");
   }
 
   return (

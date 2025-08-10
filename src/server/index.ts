@@ -43,6 +43,13 @@ const getTableProductsInput = z.object({
     .default({}),
 });
 
+const createProductInput = z.object({
+  name: z.string().min(2).max(100),
+  description: z.string().min(10).max(1000),
+  sku: z.string().min(2).max(10),
+  price: z.number().min(0.01).multipleOf(0.01),
+});
+
 export const appRouter = router({
   getTableProducts: publicProcedure.input(getTableProductsInput).query(async ({ input }) => {
     // Build query parameters using the reusable utility
@@ -63,21 +70,31 @@ export const appRouter = router({
       pageCount: Math.ceil(totalCount[0].count / queryParams.limit),
     };
   }),
+  getProduct: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+    const [product] = await db.select().from(schema.product).where(eq(schema.product.id, input.id));
+    if (!product) {
+      throw new Error(`Product with id ${input.id} not found`);
+    }
+
+    return product;
+  }),
   deleteProduct: publicProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
     return db.delete(schema.product).where(eq(schema.product.id, input.id));
   }),
-  createProduct: publicProcedure
-    .input(
-      z.object({
-        name: z.string().min(2).max(100),
-        description: z.string().min(10).max(1000),
-        sku: z.string().min(2).max(10),
-        price: z.number().min(0.01).multipleOf(0.01),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      return db.insert(schema.product).values({ ...input, price: input.price.toFixed(2) });
-    }),
+  createProduct: publicProcedure.input(createProductInput).mutation(async ({ input }) => {
+    const [product] = await db
+      .insert(schema.product)
+      .values({ ...input, price: input.price.toFixed(2) })
+      .returning({ id: schema.product.id });
+
+    return product.id;
+  }),
+  updateProduct: publicProcedure.input(createProductInput.extend({ id: z.number() })).mutation(async ({ input }) => {
+    return db
+      .update(schema.product)
+      .set({ ...input, price: input.price.toFixed(2), updatedAt: new Date() })
+      .where(eq(schema.product.id, input.id));
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -8,13 +8,12 @@ import { EditIcon, Ellipsis, TrashIcon } from "lucide-react";
 import { DeleteConfirmationDialog } from "./delete-confirmation-dialog";
 
 interface ActionsDropdownMenuProps {
-  itemName: string;
   editHref: string;
   onDelete: () => Promise<unknown>;
   disabled?: boolean;
 }
 
-export function ActionsDropdownMenu({ itemName, editHref, onDelete, disabled }: ActionsDropdownMenuProps) {
+export function ActionsDropdownMenu({ editHref, onDelete, disabled }: ActionsDropdownMenuProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   async function handleDelete() {
@@ -26,7 +25,7 @@ export function ActionsDropdownMenu({ itemName, editHref, onDelete, disabled }: 
       });
     }
 
-    toast.success(`Successfully deleted ${itemName}`);
+    toast.success(`Successfully deleted item`);
   }
 
   return (
@@ -54,11 +53,9 @@ export function ActionsDropdownMenu({ itemName, editHref, onDelete, disabled }: 
           </DropdownMenuCore.DropdownMenuItem>
         </DropdownMenuCore.DropdownMenuContent>
       </DropdownMenuCore.DropdownMenu>
-
       <DeleteConfirmationDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
-        itemName={itemName}
         onConfirm={handleDelete}
         disabled={disabled}
       />
