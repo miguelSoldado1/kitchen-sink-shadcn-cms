@@ -24,6 +24,7 @@ interface NavigationItem {
   items?: {
     title: string;
     url: string;
+    icon?: LucideIcon;
   }[];
 }
 

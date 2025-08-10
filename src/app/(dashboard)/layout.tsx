@@ -3,20 +3,14 @@
 import React from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { ShoppingBasketIcon } from "lucide-react";
+import { PackageOpenIcon } from "lucide-react";
 import Provider from "../_trpc/provider";
 
 const navigationData = [
   {
-    title: "Catalog",
-    url: "#",
-    icon: ShoppingBasketIcon,
-    items: [
-      {
-        title: "Products",
-        url: "/product",
-      },
-    ],
+    title: "Products",
+    url: "/product",
+    icon: PackageOpenIcon,
   },
 ];
 

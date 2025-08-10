@@ -21,14 +21,13 @@ interface NavMainProps {
     items?: {
       title: string;
       url: string;
+      icon?: LucideIcon;
     }[];
   }[];
 }
 
 export function NavMain({ items }: NavMainProps) {
   const pathname = usePathname();
-
-  console.log(pathname);
 
   return (
     <SidebarMenu className="p-2">
@@ -54,6 +53,7 @@ export function NavMain({ items }: NavMainProps) {
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
                           <a href={subItem.url}>
+                            {subItem.icon && <subItem.icon />}
                             <span>{subItem.title}</span>
                           </a>
                         </SidebarMenuSubButton>
@@ -64,7 +64,7 @@ export function NavMain({ items }: NavMainProps) {
               </div>
             </Collapsible>
           ) : (
-            <SidebarMenuButton tooltip={item.title} asChild className="!bg-red-500 hover:!bg-red-600">
+            <SidebarMenuButton tooltip={item.title} asChild>
               <a href={item.url}>
                 {item.icon && <item.icon />}
                 <span>{item.title}</span>
