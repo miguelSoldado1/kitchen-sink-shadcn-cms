@@ -1,28 +1,26 @@
 import Link from "next/link";
+import { PageHeader, PageLayout } from "@/components/page-layout";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ProductTable } from "./product-table";
 
+const TITLE = "Products";
+const DESCRIPTION = "Manage and view all your products in one place.";
+
 export default function ProductPage() {
   return (
-    <main className="flex-1 space-y-4 p-4 pt-6 md:px-6 md:py-8">
-      <section className="flex items-center justify-between space-y-2">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Products</h1>
-          <p className="text-muted-foreground">Manage and view all your products in one place.</p>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button asChild>
-            <Link href="/product/create">
-              <Plus className="mr-2 size-4" />
-              Add Product
-            </Link>
-          </Button>
-        </div>
-      </section>
+    <PageLayout>
+      <PageHeader title={TITLE} description={DESCRIPTION}>
+        <Button asChild>
+          <Link href="/product/create">
+            <Plus className="size-4" />
+            Add Product
+          </Link>
+        </Button>
+      </PageHeader>
       <section>
         <ProductTable />
       </section>
-    </main>
+    </PageLayout>
   );
 }

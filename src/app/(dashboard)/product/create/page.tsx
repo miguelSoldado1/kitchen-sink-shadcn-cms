@@ -1,5 +1,14 @@
-import React from "react";
+import { PageHeader, PageLayout } from "@/components/page-layout";
+import { ProductCreateForm } from "./form";
+
+const TITLE = "Create Product";
+const DESCRIPTION = "Add a new product to your inventory.";
 
 export default function CreateProductPage() {
-  return <div>CreateProductPage</div>;
+  return (
+    <PageLayout>
+      <PageHeader title={TITLE} description={DESCRIPTION} />
+      <ProductCreateForm />
+    </PageLayout>
+  );
 }

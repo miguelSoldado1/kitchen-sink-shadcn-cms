@@ -66,6 +66,18 @@ export const appRouter = router({
   deleteProduct: publicProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
     return db.delete(schema.product).where(eq(schema.product.id, input.id));
   }),
+  createProduct: publicProcedure
+    .input(
+      z.object({
+        name: z.string().min(2).max(100),
+        description: z.string().min(10).max(1000),
+        sku: z.string().min(2).max(10),
+        price: z.number().min(0.01).multipleOf(0.01),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      return db.insert(schema.product).values({ ...input, price: input.price.toFixed(2) });
+    }),
 });
 
 export type AppRouter = typeof appRouter;
