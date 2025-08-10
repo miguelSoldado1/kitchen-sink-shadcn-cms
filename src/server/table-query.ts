@@ -1,0 +1,149 @@
+import { and, asc, desc, gte, ilike, lte, or } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
+import type { PgColumn } from "drizzle-orm/pg-core";
+
+export interface TableQueryConfig<T extends Record<string, PgColumn>> {
+  sortColumns: T;
+  filterColumns: Partial<T>;
+  dateColumns?: Set<string>;
+  textColumns?: Set<string>;
+  rangeColumns?: Set<string>;
+}
+
+export interface TableQueryInput {
+  page: number;
+  limit: number;
+  sorting: Array<{ id: string; desc: boolean }>;
+  filters: Record<string, string | number | (string | number)[]>;
+}
+
+export interface TableQueryResult<TData> {
+  data: TData[];
+  pageCount: number;
+}
+
+export interface QueryParams {
+  whereClause?: SQL<unknown>;
+  orderBy: SQL<unknown>[];
+  limit: number;
+  offset: number;
+}
+
+function parseDate(value: string | number): Date | null {
+  const date =
+    typeof value === "number"
+      ? new Date(value)
+      : typeof value === "string" && /^\d+$/.test(value)
+        ? new Date(parseInt(value, 10))
+        : new Date(value);
+
+  return !isNaN(date.getTime()) ? date : null;
+}
+
+export function buildSortingClause<T extends Record<string, PgColumn>>(
+  sorting: Array<{ id: string; desc: boolean }>,
+  sortColumns: T,
+) {
+  return sorting
+    .map((sort) => {
+      const column = sortColumns[sort.id];
+      if (!column) return null;
+      return sort.desc ? desc(column) : asc(column);
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
+}
+
+export function buildFilterConditions<T extends Record<string, PgColumn>>(
+  filters: Record<string, string | number | (string | number)[]>,
+  config: Pick<TableQueryConfig<T>, "filterColumns" | "dateColumns" | "textColumns" | "rangeColumns">,
+): SQL<unknown>[] {
+  const whereConditions: SQL<unknown>[] = [];
+
+  Object.entries(filters).forEach(([key, value]) => {
+    const column = config.filterColumns[key];
+    if (!column || !value) return;
+
+    let condition: SQL<unknown> | null = null;
+
+    // Check if it's a date column
+    if (config.dateColumns?.has(key)) {
+      // Handle date columns
+      if (Array.isArray(value)) {
+        const conditions = value
+          .map((v) => {
+            const date = parseDate(v);
+            return date ? gte(column, date) : null;
+          })
+          .filter((condition): condition is NonNullable<typeof condition> => condition !== null);
+        condition = conditions.length > 0 ? or(...conditions)! : null;
+      } else {
+        const date = parseDate(value);
+        if (date) {
+          const startOfDay = new Date(date);
+          startOfDay.setHours(0, 0, 0, 0);
+          const endOfDay = new Date(date);
+          endOfDay.setHours(23, 59, 59, 999);
+          condition = and(gte(column, startOfDay), lte(column, endOfDay))!;
+        }
+      }
+    } else if (config.rangeColumns?.has(key)) {
+      // Handle numeric range columns (like price)
+      if (Array.isArray(value) && value.length === 2) {
+        const [min, max] = value.map((v) => Number(v));
+        if (!isNaN(min) && !isNaN(max)) {
+          condition = and(gte(column, min), lte(column, max))!;
+        }
+      } else {
+        // Single value for range column - exact match
+        const numValue = Number(value);
+        if (!isNaN(numValue)) {
+          condition = gte(column, numValue);
+        }
+      }
+    } else {
+      // Handle text/number columns
+      if (Array.isArray(value)) {
+        const conditions = value.map((v) => ilike(column, `%${String(v)}%`));
+        condition = conditions.length > 0 ? or(...conditions)! : null;
+      } else {
+        const stringValue = String(value);
+        const searchTerms = stringValue.trim().split(/\s+/).filter(Boolean);
+        if (searchTerms.length > 0) {
+          if (searchTerms.length === 1) {
+            condition = ilike(column, `%${searchTerms[0]}%`);
+          } else {
+            const wordConditions = searchTerms.map((term: string) => ilike(column, `%${term}%`));
+            condition = and(...wordConditions)!;
+          }
+        }
+      }
+    }
+
+    if (condition) {
+      whereConditions.push(condition);
+    }
+  });
+
+  return whereConditions;
+}
+
+export function buildQueryParams<T extends Record<string, PgColumn>>(
+  input: TableQueryInput,
+  config: TableQueryConfig<T>,
+): QueryParams {
+  const offset = (input.page - 1) * input.limit;
+
+  // Build order by clause from sorting
+  const orderBy = buildSortingClause(input.sorting, config.sortColumns);
+
+  // Build where conditions from filters
+  const whereConditions = buildFilterConditions(input.filters, config);
+  const whereClause = whereConditions.length > 0 ? and(...whereConditions) : undefined;
+
+  return {
+    whereClause,
+    orderBy,
+    limit: input.limit,
+    offset,
+  };
+}

@@ -38,6 +38,14 @@ const columns: ColumnDef<typeof product.$inferSelect>[] = [
     enableColumnFilter: true,
   },
   {
+    id: "sku",
+    accessorKey: "sku",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Sku" />,
+    meta: { label: "Sku", variant: "text", placeholder: "Search sku…" },
+    enableSorting: false,
+    enableColumnFilter: true,
+  },
+  {
     id: "price",
     accessorKey: "price",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
@@ -46,17 +54,10 @@ const columns: ColumnDef<typeof product.$inferSelect>[] = [
       label: "Price",
       variant: "range",
       unit: "$",
-      range: [0, 1000],
+      range: [0, 2000],
     },
-    enableSorting: false,
+    enableSorting: true,
     enableColumnFilter: true,
-  },
-  {
-    id: "sku",
-    accessorKey: "sku",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Sku" />,
-    meta: { label: "Sku" },
-    enableSorting: false,
   },
   {
     id: "createdAt",
@@ -118,9 +119,9 @@ export function ProductTable() {
       <DataTableSkeleton
         columnCount={6}
         cellWidths={["15rem", "10rem", "8rem", "8rem", "8rem", "10rem"]}
-        shrinkZero
-        filterCount={4}
+        filterCount={5}
         rowCount={10}
+        shrinkZero
       />
     );
   }
