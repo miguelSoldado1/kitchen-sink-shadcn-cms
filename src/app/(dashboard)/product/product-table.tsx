@@ -6,11 +6,12 @@ import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/hooks/use-data-table";
-import { columns } from "./columns";
+import { columns } from "./product-columns";
 
 export function ProductTable() {
   const { table, query } = useDataTable({
     queryFn: (props) => trpc.getTableProducts.useQuery(props, { placeholderData: (previousData) => previousData }),
+    initialState: { sorting: [{ id: "createdAt", desc: true }], columnPinning: { right: ["actions"] } },
     columns,
   });
 

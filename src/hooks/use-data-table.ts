@@ -17,6 +17,7 @@ import { parseAsArrayOf, parseAsInteger, parseAsString, useQueryState, useQueryS
 import type { ExtendedColumnSort } from "@/types/data-table";
 import type {
   ColumnFiltersState,
+  ColumnPinningState,
   PaginationState,
   RowSelectionState,
   SortingState,
@@ -73,11 +74,17 @@ interface UseTrpcTableProps<T>
   debounceMs?: number;
 }
 
-export function useDataTable<T>({ queryFn, columns, debounceMs = DEBOUNCE_MS, ...tableProps }: UseTrpcTableProps<T>) {
+export function useDataTable<T>({
+  queryFn,
+  columns,
+  debounceMs = DEBOUNCE_MS,
+  initialState,
+  ...tableProps
+}: UseTrpcTableProps<T>) {
   const [page, setPage] = useQueryState(PAGE_KEY, parseAsInteger.withDefault(1).withOptions({ shallow: true }));
   const [perPage, setPerPage] = useQueryState(
     PER_PAGE_KEY,
-    parseAsInteger.withDefault(10).withOptions({ shallow: true }),
+    parseAsInteger.withDefault(initialState?.pagination?.pageSize ?? 10).withOptions({ shallow: true }),
   );
 
   // Get column IDs for sorting parser
@@ -87,7 +94,9 @@ export function useDataTable<T>({ queryFn, columns, debounceMs = DEBOUNCE_MS, ..
 
   const [sorting, setSorting] = useQueryState(
     SORT_KEY,
-    getSortingStateParser<T>(columnIds).withOptions({ shallow: true }).withDefault([]),
+    getSortingStateParser<T>(columnIds)
+      .withOptions({ shallow: true })
+      .withDefault((initialState?.sorting as ExtendedColumnSort<T>[]) ?? []),
   );
 
   // Filtering setup
@@ -126,9 +135,10 @@ export function useDataTable<T>({ queryFn, columns, debounceMs = DEBOUNCE_MS, ..
 
   const query = queryFn({ page, limit: perPage, sorting, filters });
 
-  // Table state - use regular useState for other states
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+  // Table state - use regular useState for other states with initialState support
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(initialState?.columnVisibility ?? {});
+  const [columnPinning, setColumnPinning] = useState<ColumnPinningState>(initialState?.columnPinning ?? {});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>(initialState?.rowSelection ?? {});
 
   // Initialize column filters from URL state
   const initialColumnFilters: ColumnFiltersState = useMemo(() => {
@@ -219,12 +229,14 @@ export function useDataTable<T>({ queryFn, columns, debounceMs = DEBOUNCE_MS, ..
       sorting,
       columnFilters,
       columnVisibility,
+      columnPinning,
       rowSelection,
     },
     onPaginationChange,
     onSortingChange,
     onColumnFiltersChange,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnPinningChange: setColumnPinning,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
