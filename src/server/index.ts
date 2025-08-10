@@ -1,7 +1,7 @@
 import { db } from "@/lib/database/drizzle";
 import * as schema from "@/lib/database/schema";
 import { buildQueryParams } from "@/server/table-query";
-import { count } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import z from "zod";
 import { publicProcedure, router } from "./trpc";
 import type { TableQueryConfig } from "@/server/table-query";
@@ -62,6 +62,9 @@ export const appRouter = router({
       data: products,
       pageCount: Math.ceil(totalCount[0].count / queryParams.limit),
     };
+  }),
+  deleteProduct: publicProcedure.input(z.object({ id: z.number() })).mutation(async ({ input }) => {
+    return db.delete(schema.product).where(eq(schema.product.id, input.id));
   }),
 });
 

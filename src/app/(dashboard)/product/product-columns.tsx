@@ -1,13 +1,7 @@
+import { trpc } from "@/app/_trpc/client";
+import { ActionsDropdownMenu } from "@/components/actions-dropdown-menu";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { formatDate } from "@/lib/format";
-import { EditIcon, Ellipsis, TrashIcon } from "lucide-react";
 import type { product } from "@/lib/database/schema";
 import type { ColumnDef } from "@tanstack/react-table";
 
@@ -77,30 +71,19 @@ export const columns: ColumnDef<typeof product.$inferSelect>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const product = row.original; // This gives you the full product object
-      const productId = product.id; // Assuming your product has an 'id' field
+    cell({ row }) {
+      const utils = trpc.useUtils();
+      const mutation = trpc.deleteProduct.useMutation({
+        onSuccess: () => utils.getTableProducts.invalidate(),
+      });
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button aria-label="Open menu" variant="ghost" className="data-[state=open]:bg-muted flex size-8 p-0">
-              <Ellipsis className="size-4" aria-hidden="true" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem className="flex justify-between">
-              Edit <EditIcon />
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="flex justify-between"
-              variant="destructive"
-              onClick={() => console.log("Product ID:", productId)}
-            >
-              Delete <TrashIcon />
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ActionsDropdownMenu
+          itemName={row.original.name}
+          editHref={`/product/edit/${row.original.id}`}
+          onDelete={() => mutation.mutateAsync({ id: row.original.id })}
+          disabled={mutation.isPending}
+        />
       );
     },
     size: 20,
