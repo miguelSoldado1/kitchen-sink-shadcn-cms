@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
+import { InputClear } from "../ui/input-clear";
 import type { Column, Table } from "@tanstack/react-table";
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<"div"> {
@@ -63,10 +64,11 @@ function DataTableToolbarFilter<TData>({ column }: DataTableToolbarFilterProps<T
       switch (columnMeta.variant) {
         case "text":
           return (
-            <Input
+            <InputClear
               placeholder={columnMeta.placeholder ?? columnMeta.label}
               value={(column.getFilterValue() as string) ?? ""}
               onChange={(event) => column.setFilterValue(event.target.value)}
+              onClear={() => column.setFilterValue("")}
               className="h-8 w-40 lg:w-56"
             />
           );

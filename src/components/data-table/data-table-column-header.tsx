@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import { ChevronDown, ChevronsUpDown, ChevronUp, EyeOff, X } from "lucide-react";
+import { ChevronDown, ChevronsUpDown, ChevronUp, X } from "lucide-react";
 import type { Column } from "@tanstack/react-table";
 
 interface DataTableColumnHeaderProps<TData, TValue> extends React.ComponentProps<typeof DropdownMenuTrigger> {
@@ -71,16 +71,6 @@ export function DataTableColumnHeader<TData, TValue>({
               </DropdownMenuItem>
             )}
           </>
-        )}
-        {column.getCanHide() && (
-          <DropdownMenuCheckboxItem
-            className="[&_svg]:text-muted-foreground relative pr-8 pl-2 [&>span:first-child]:right-2 [&>span:first-child]:left-auto"
-            checked={!column.getIsVisible()}
-            onClick={() => column.toggleVisibility(false)}
-          >
-            <EyeOff />
-            Hide
-          </DropdownMenuCheckboxItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
