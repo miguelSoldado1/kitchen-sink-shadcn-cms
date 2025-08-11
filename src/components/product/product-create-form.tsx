@@ -26,7 +26,7 @@ export function ProductCreateForm() {
     },
   });
 
-  const mutation = trpc.createProduct.useMutation();
+  const mutation = trpc.product.createProduct.useMutation();
   async function onSubmit(input: z.infer<typeof basicInfoSchema>) {
     const { data: id, error } = await tryCatch(mutation.mutateAsync(input));
     if (error) {
@@ -34,7 +34,7 @@ export function ProductCreateForm() {
     }
 
     toast.success("Product created successfully");
-    utils.getTableProducts.invalidate();
+    utils.product.getTableProducts.invalidate();
     router.push(`/product/edit/${id}`);
   }
 

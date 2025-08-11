@@ -10,7 +10,8 @@ import { columns } from "./product-columns";
 
 export function ProductTable() {
   const { table, query } = useDataTable({
-    queryFn: (props) => trpc.getTableProducts.useQuery(props, { placeholderData: (previousData) => previousData }),
+    queryFn: (props) =>
+      trpc.product.getTableProducts.useQuery(props, { placeholderData: (previousData) => previousData }),
     initialState: { sorting: [{ id: "createdAt", desc: true }], columnPinning: { right: ["actions"] } },
     columns,
   });

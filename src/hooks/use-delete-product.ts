@@ -16,7 +16,7 @@ export function useDeleteProduct(options: UseDeleteProductOptions) {
   const utils = trpc.useUtils();
   const router = useRouter();
 
-  const mutation = trpc.deleteProduct.useMutation();
+  const mutation = trpc.product.deleteProduct.useMutation();
 
   async function handleDelete() {
     const result = await tryCatch(mutation.mutateAsync({ id: options.id }));
@@ -28,7 +28,7 @@ export function useDeleteProduct(options: UseDeleteProductOptions) {
     }
 
     toast.success("Successfully deleted product");
-    utils.getTableProducts.invalidate();
+    utils.product.getTableProducts.invalidate();
     setShowDeleteDialog(false);
 
     if (options.redirectHref) {

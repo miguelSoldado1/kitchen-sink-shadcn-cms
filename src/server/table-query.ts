@@ -2,9 +2,12 @@ import { and, asc, desc, gte, ilike, lte, or } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import type { PgColumn } from "drizzle-orm/pg-core";
 
-export interface TableQueryConfig<T extends Record<string, PgColumn>> {
-  sortColumns: T;
-  filterColumns: Partial<T>;
+export interface TableQueryConfig<
+  TSortColumns extends Record<string, PgColumn>,
+  TFilterColumns extends Record<string, PgColumn> = TSortColumns,
+> {
+  sortColumns: TSortColumns;
+  filterColumns: TFilterColumns;
   dateColumns?: Set<string>;
   textColumns?: Set<string>;
   rangeColumns?: Set<string>;
@@ -55,7 +58,10 @@ export function buildSortingClause<T extends Record<string, PgColumn>>(
 
 export function buildFilterConditions<T extends Record<string, PgColumn>>(
   filters: Record<string, string | number | (string | number)[]>,
-  config: Pick<TableQueryConfig<T>, "filterColumns" | "dateColumns" | "textColumns" | "rangeColumns">,
+  config: Pick<
+    TableQueryConfig<Record<string, PgColumn>, T>,
+    "filterColumns" | "dateColumns" | "textColumns" | "rangeColumns"
+  >,
 ): SQL<unknown>[] {
   const whereConditions: SQL<unknown>[] = [];
 
@@ -127,10 +133,10 @@ export function buildFilterConditions<T extends Record<string, PgColumn>>(
   return whereConditions;
 }
 
-export function buildQueryParams<T extends Record<string, PgColumn>>(
-  input: TableQueryInput,
-  config: TableQueryConfig<T>,
-): QueryParams {
+export function buildQueryParams<
+  TSortColumns extends Record<string, PgColumn>,
+  TFilterColumns extends Record<string, PgColumn>,
+>(input: TableQueryInput, config: TableQueryConfig<TSortColumns, TFilterColumns>): QueryParams {
   const offset = (input.page - 1) * input.limit;
 
   // Build order by clause from sorting
