@@ -7,7 +7,7 @@ const DESCRIPTION = "Add a new product to your inventory.";
 export default function CreateProductPage() {
   return (
     <PageLayout>
-      <PageHeader title={TITLE} description={DESCRIPTION} />
+      <PageHeader title={TITLE} description={DESCRIPTION} backHref="/product" />
       <ProductCreateForm />
     </PageLayout>
   );

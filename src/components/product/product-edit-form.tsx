@@ -2,13 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { trpc } from "@/app/_trpc/client";
 import { tryCatch } from "@/app/try-catch";
 import { BasicInfoForm, basicInfoSchema } from "@/components/product/basic-info-form";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { trpc } from "@/lib/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type z from "zod";

@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { trpc } from "@/app/_trpc/client";
 import { tryCatch } from "@/app/try-catch";
+import { trpc } from "@/lib/trpc/client";
 
 interface UseDeleteProductOptions {
   id: number;

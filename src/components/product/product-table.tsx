@@ -1,11 +1,11 @@
 "use client";
 
-import { trpc } from "@/app/_trpc/client";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/hooks/use-data-table";
+import { trpc } from "@/lib/trpc/client";
 import { columns } from "./product-columns";
 
 export function ProductTable() {

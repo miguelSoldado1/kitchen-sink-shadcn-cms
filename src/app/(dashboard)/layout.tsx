@@ -4,7 +4,7 @@ import React from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { PackageOpenIcon } from "lucide-react";
-import Provider from "../_trpc/provider";
+import Provider from "../../lib/trpc/provider";
 
 const navigationData = [
   {

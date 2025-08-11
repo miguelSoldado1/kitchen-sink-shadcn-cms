@@ -21,7 +21,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
 
   return (
     <PageLayout>
-      <PageHeader title={TITLE} description={DESCRIPTION}>
+      <PageHeader title={TITLE} description={DESCRIPTION} backHref="/product">
         <DeleteProductButton id={id.data} />
       </PageHeader>
       <ProductEditForm id={id.data} />
