@@ -1,5 +1,7 @@
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import * as DialogCore from "@/components/ui/dialog";
+import { authClient } from "@/lib/auth/auth-client";
 
 interface DeleteConfirmationDialogProps {
   open: boolean;
@@ -9,7 +11,14 @@ interface DeleteConfirmationDialogProps {
 }
 
 export function DeleteConfirmationDialog({ open, onOpenChange, onConfirm, disabled }: DeleteConfirmationDialogProps) {
+  const { data: session } = authClient.useSession();
+
   async function handleConfirm() {
+    if (!session?.user.role || !["admin", "write"].includes(session.user.role)) {
+      toast.error("You do not have permission to delete this item.");
+      return onOpenChange(false);
+    }
+
     await onConfirm();
     onOpenChange(false);
   }
