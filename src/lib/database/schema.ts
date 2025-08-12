@@ -15,5 +15,3 @@ export const product = pgTable("product", {
     .$defaultFn(() => new Date())
     .notNull(),
 });
-
-export type Product = typeof product.$inferSelect;

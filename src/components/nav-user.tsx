@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Avatar } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -76,7 +77,14 @@ export function NavUser() {
                   <GalleryVerticalEndIcon className="m-auto p-1" />
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{data?.user.name}</span>
+                  <div className="flex items-center justify-between">
+                    <span className="truncate font-medium">{data?.user.name}</span>
+                    {data?.user?.role && (
+                      <Badge variant="secondary" className="text-xs">
+                        {data.user.role}
+                      </Badge>
+                    )}
+                  </div>
                   <span className="truncate text-xs">{data?.user.email}</span>
                 </div>
               </div>
