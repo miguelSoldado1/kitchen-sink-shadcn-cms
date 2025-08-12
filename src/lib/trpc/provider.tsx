@@ -12,6 +12,7 @@ const queryClientOptions: QueryClientConfig = {
     queries: {
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
+      retry: 0,
     },
   },
 };

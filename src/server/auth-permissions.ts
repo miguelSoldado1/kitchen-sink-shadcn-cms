@@ -4,6 +4,9 @@ import { headers } from "next/headers";
 import { redirect, RedirectType } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 
+// NOTE: These auth-permissions functions can be used for "frontend" route protection
+// right now I'm just using the trpc procedures for this purpose.
+
 export async function checkAdminPermission(redirectUrl: string) {
   return checkRolePermission(["admin"], redirectUrl);
 }

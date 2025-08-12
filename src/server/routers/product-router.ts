@@ -4,7 +4,7 @@ import { buildQueryParams } from "@/server/table-query";
 import { TRPCError } from "@trpc/server";
 import { count, eq } from "drizzle-orm";
 import z from "zod";
-import { publicProcedure, router } from "./trpc";
+import { readProcedure, router, writeProcedure } from "../trpc";
 import type { TableQueryConfig } from "@/server/table-query";
 
 const PRODUCT_SORT_COLUMNS = {
@@ -174,9 +174,9 @@ async function updateProductHandler(input: z.infer<typeof updateProductInput>) {
 }
 
 export const productRouter = router({
-  getTableProducts: publicProcedure.input(getTableProductsInput).query(({ input }) => getTableProductsHandler(input)),
-  getProduct: publicProcedure.input(getProductSchema).query(({ input }) => getProductHandler(input)),
-  deleteProduct: publicProcedure.input(deleteProductSchema).mutation(({ input }) => deleteProductHandler(input)),
-  createProduct: publicProcedure.input(createProductInput).mutation(({ input }) => createProductHandler(input)),
-  updateProduct: publicProcedure.input(updateProductInput).mutation(({ input }) => updateProductHandler(input)),
+  getTableProducts: readProcedure.input(getTableProductsInput).query(({ input }) => getTableProductsHandler(input)),
+  getProduct: readProcedure.input(getProductSchema).query(({ input }) => getProductHandler(input)),
+  deleteProduct: writeProcedure.input(deleteProductSchema).mutation(({ input }) => deleteProductHandler(input)),
+  createProduct: writeProcedure.input(createProductInput).mutation(({ input }) => createProductHandler(input)),
+  updateProduct: writeProcedure.input(updateProductInput).mutation(({ input }) => updateProductHandler(input)),
 });

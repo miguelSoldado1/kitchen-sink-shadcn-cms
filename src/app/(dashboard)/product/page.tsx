@@ -2,15 +2,12 @@ import Link from "next/link";
 import { PageHeader, PageLayout } from "@/components/page-layout";
 import { ProductTable } from "@/components/product/product-table";
 import { Button } from "@/components/ui/button";
-import { checkReadPermission } from "@/server/auth-permissions";
 import { Plus } from "lucide-react";
 
 const TITLE = "Products";
 const DESCRIPTION = "Manage and view all your products in one place.";
 
-export default async function ProductPage() {
-  await checkReadPermission("/sign-in");
-
+export default function ProductPage() {
   return (
     <PageLayout>
       <PageHeader title={TITLE} description={DESCRIPTION}>

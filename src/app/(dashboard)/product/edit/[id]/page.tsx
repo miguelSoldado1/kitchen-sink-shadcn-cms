@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { PageHeader, PageLayout } from "@/components/page-layout";
 import { DeleteProductButton } from "@/components/product/delete-product-button";
 import { ProductEditForm } from "@/components/product/product-edit-form";
-import { checkWritePermission } from "@/server/auth-permissions";
 import z from "zod";
 
 const TITLE = "Edit Product";
@@ -15,8 +14,6 @@ interface EditProductPageProps {
 const idSchema = z.coerce.number().min(1);
 
 export default async function EditProductPage({ params }: EditProductPageProps) {
-  await checkWritePermission("/product");
-
   const id = idSchema.safeParse((await params).id);
   if (!id.success) {
     redirect("/product/create");
