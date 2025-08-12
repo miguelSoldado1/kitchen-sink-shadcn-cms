@@ -7,13 +7,13 @@ import z from "zod";
 import { readProcedure, router, writeProcedure } from "../trpc";
 import type { TableQueryConfig } from "@/server/table-query";
 
-const PRODUCT_SORT_COLUMNS = {
+const SORT_COLUMNS = {
   price: schema.product.price,
   createdAt: schema.product.createdAt,
   updatedAt: schema.product.updatedAt,
 } as const;
 
-const PRODUCT_FILTER_COLUMNS = {
+const FILTER_COLUMNS = {
   name: schema.product.name,
   sku: schema.product.sku,
   price: schema.product.price,
@@ -21,9 +21,9 @@ const PRODUCT_FILTER_COLUMNS = {
   updatedAt: schema.product.updatedAt,
 } as const;
 
-const PRODUCT_CONFIG: TableQueryConfig<typeof PRODUCT_SORT_COLUMNS, typeof PRODUCT_FILTER_COLUMNS> = {
-  sortColumns: PRODUCT_SORT_COLUMNS,
-  filterColumns: PRODUCT_FILTER_COLUMNS,
+const CONFIG: TableQueryConfig<typeof SORT_COLUMNS, typeof FILTER_COLUMNS> = {
+  sortColumns: SORT_COLUMNS,
+  filterColumns: FILTER_COLUMNS,
   dateColumns: new Set(["createdAt", "updatedAt"]),
   textColumns: new Set(["name", "sku"]),
   rangeColumns: new Set(["price"]),
@@ -44,20 +44,20 @@ const getTableProductsInput = z.object({
 
 async function getTableProductsHandler(input: z.infer<typeof getTableProductsInput>) {
   // Build query parameters using the reusable utility
-  const queryParams = buildQueryParams(input, PRODUCT_CONFIG);
+  const queryParams = buildQueryParams(input, CONFIG);
 
   // Build queries
   const baseQuery = db.select().from(schema.product);
-  const productsQuery = queryParams.whereClause ? baseQuery.where(queryParams.whereClause) : baseQuery;
-  const sortedQuery = queryParams.orderBy.length > 0 ? productsQuery.orderBy(...queryParams.orderBy) : productsQuery;
+  const filterQuery = queryParams.whereClause ? baseQuery.where(queryParams.whereClause) : baseQuery;
+  const sortedQuery = queryParams.orderBy.length > 0 ? filterQuery.orderBy(...queryParams.orderBy) : filterQuery;
 
-  const [products, totalCount] = await Promise.all([
+  const [data, totalCount] = await Promise.all([
     sortedQuery.limit(queryParams.limit).offset(queryParams.offset),
     db.select({ count: count() }).from(schema.product).where(queryParams.whereClause),
   ]);
 
   return {
-    data: products,
+    data: data,
     pageCount: Math.ceil(totalCount[0].count / queryParams.limit),
   };
 }

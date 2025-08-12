@@ -6,12 +6,12 @@ import { DataTableSortList } from "@/components/data-table/data-table-sort-list"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/hooks/use-data-table";
 import { trpc } from "@/lib/trpc/client";
-import { columns } from "./product-columns";
+import { columns } from "./category-columns";
 
-export function ProductTable() {
+export function CategoryTable() {
   const { table, query } = useDataTable({
     queryFn: (props) => {
-      return trpc.product.getTableProducts.useQuery(props, { placeholderData: (previousData) => previousData });
+      return trpc.category.getTableCategories.useQuery(props, { placeholderData: (previousData) => previousData });
     },
     initialState: { sorting: [{ id: "createdAt", desc: true }], columnPinning: { right: ["actions"] } },
     columns,
@@ -21,9 +21,9 @@ export function ProductTable() {
     return (
       <section>
         <DataTableSkeleton
-          columnCount={6}
-          cellWidths={["15rem", "10rem", "8rem", "8rem", "8rem", "10rem"]}
-          filterCount={5}
+          columnCount={4}
+          cellWidths={["5rem", "15rem", "8rem", "8rem"]}
+          filterCount={3}
           rowCount={10}
           shrinkZero
         />
