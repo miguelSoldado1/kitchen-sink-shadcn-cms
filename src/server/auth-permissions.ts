@@ -5,18 +5,18 @@ import { redirect, RedirectType } from "next/navigation";
 import { auth } from "@/lib/auth/auth";
 
 export async function checkAdminPermission(redirectUrl: string) {
-  return checkPermission({ project: ["admin"] }, redirectUrl);
+  return checkRolePermission(["admin"], redirectUrl);
 }
 
 export async function checkWritePermission(redirectUrl: string) {
-  return checkPermission({ project: ["write"] }, redirectUrl);
+  return checkRolePermission(["admin", "write"], redirectUrl);
 }
 
 export async function checkReadPermission(redirectUrl: string) {
-  return checkPermission({ project: ["read"] }, redirectUrl);
+  return checkRolePermission(["admin", "write", "read"], redirectUrl);
 }
 
-async function checkPermission(permission: Record<string, string[]>, redirectUrl: string) {
+async function checkRolePermission(allowedRoles: string[], redirectUrl: string) {
   const headersList = await headers();
   const session = await auth.api.getSession({ headers: headersList });
 
@@ -24,11 +24,10 @@ async function checkPermission(permission: Record<string, string[]>, redirectUrl
     return redirect("/sign-in", RedirectType.replace);
   }
 
-  const { error, success } = await auth.api.userHasPermission({
-    body: { permissions: permission, userId: session.user.id },
-  });
+  const userRoles = session.user.role?.split(",") || [];
+  const hasPermission = userRoles.some((role) => allowedRoles.includes(role));
 
-  if (error || !success) {
+  if (!hasPermission) {
     return redirect(redirectUrl, RedirectType.replace);
   }
 }
