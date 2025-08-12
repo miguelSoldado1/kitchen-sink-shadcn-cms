@@ -25,7 +25,7 @@ async function checkPermission(permission: Record<string, string[]>, redirectUrl
   }
 
   const { error, success } = await auth.api.userHasPermission({
-    body: { permission: permission, userId: session.user.id },
+    body: { permissions: permission, userId: session.user.id },
   });
 
   if (error || !success) {

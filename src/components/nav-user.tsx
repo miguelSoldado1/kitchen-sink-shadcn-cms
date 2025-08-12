@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
-import { signOut, useSession } from "@/lib/auth/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { ChevronsUpDown, GalleryVerticalEndIcon, LogOutIcon, Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Skeleton } from "./ui/skeleton";
@@ -24,11 +24,11 @@ import { Skeleton } from "./ui/skeleton";
 export function NavUser() {
   const router = useRouter();
   const { isMobile } = useSidebar();
-  const { data } = useSession();
+  const { data } = authClient.useSession();
   const { setTheme } = useTheme();
 
   async function handleSignOut() {
-    const { error } = await signOut();
+    const { error } = await authClient.signOut();
 
     if (error) {
       return toast.error(error.message || "An error occurred while signing out.");

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { signUp } from "@/lib/auth/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GalleryVerticalEndIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -27,7 +27,7 @@ export function SignUpForm() {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    const { error } = await signUp.email({ ...data, callbackURL: "/" });
+    const { error } = await authClient.signUp.email({ ...data, callbackURL: "/" });
 
     if (error) {
       return toast.error(error.message || "An error occurred while signing in.");
