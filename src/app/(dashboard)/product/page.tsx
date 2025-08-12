@@ -18,9 +18,7 @@ export default function ProductPage() {
           </Link>
         </Button>
       </PageHeader>
-      <section>
-        <ProductTable />
-      </section>
+      <ProductTable />
     </PageLayout>
   );
 }

@@ -18,21 +18,25 @@ export function ProductTable() {
 
   if (query.isPending && !query.isPlaceholderData) {
     return (
-      <DataTableSkeleton
-        columnCount={6}
-        cellWidths={["15rem", "10rem", "8rem", "8rem", "8rem", "10rem"]}
-        filterCount={5}
-        rowCount={10}
-        shrinkZero
-      />
+      <section>
+        <DataTableSkeleton
+          columnCount={6}
+          cellWidths={["15rem", "10rem", "8rem", "8rem", "8rem", "10rem"]}
+          filterCount={5}
+          rowCount={10}
+          shrinkZero
+        />
+      </section>
     );
   }
 
   return (
-    <DataTable table={table}>
-      <DataTableToolbar table={table}>
-        <DataTableSortList table={table} />
-      </DataTableToolbar>
-    </DataTable>
+    <section>
+      <DataTable table={table}>
+        <DataTableToolbar table={table}>
+          <DataTableSortList table={table} />
+        </DataTableToolbar>
+      </DataTable>
+    </section>
   );
 }
