@@ -1,4 +1,5 @@
 import { and, asc, desc, gte, ilike, lte, or } from "drizzle-orm";
+import z from "zod";
 import type { SQL } from "drizzle-orm";
 import type { PgColumn } from "drizzle-orm/pg-core";
 
@@ -153,3 +154,16 @@ export function buildQueryParams<
     offset,
   };
 }
+
+export const getTableDataInput = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sorting: z
+    .array(z.object({ id: z.string(), desc: z.boolean() }))
+    .optional()
+    .default([]),
+  filters: z
+    .record(z.string(), z.union([z.string(), z.number(), z.array(z.union([z.string(), z.number()]))]))
+    .optional()
+    .default({}),
+});

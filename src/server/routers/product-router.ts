@@ -1,6 +1,6 @@
 import { db } from "@/lib/database/drizzle";
 import * as schema from "@/lib/database/schema";
-import { buildQueryParams } from "@/server/table-query";
+import { buildQueryParams, getTableDataInput } from "@/server/table-query";
 import { TRPCError } from "@trpc/server";
 import { count, eq } from "drizzle-orm";
 import z from "zod";
@@ -29,20 +29,7 @@ const CONFIG: TableQueryConfig<typeof SORT_COLUMNS, typeof FILTER_COLUMNS> = {
   rangeColumns: new Set(["price"]),
 } as const;
 
-const getTableProductsInput = z.object({
-  page: z.number().min(1).default(1),
-  limit: z.number().min(1).max(100).default(10),
-  sorting: z
-    .array(z.object({ id: z.string(), desc: z.boolean() }))
-    .optional()
-    .default([]),
-  filters: z
-    .record(z.string(), z.union([z.string(), z.number(), z.array(z.union([z.string(), z.number()]))]))
-    .optional()
-    .default({}),
-});
-
-async function getTableProductsHandler(input: z.infer<typeof getTableProductsInput>) {
+async function getTableProductsHandler(input: z.infer<typeof getTableDataInput>) {
   // Build query parameters using the reusable utility
   const queryParams = buildQueryParams(input, CONFIG);
 
@@ -174,7 +161,7 @@ async function updateProductHandler(input: z.infer<typeof updateProductInput>) {
 }
 
 export const productRouter = router({
-  getTableProducts: readProcedure.input(getTableProductsInput).query(({ input }) => getTableProductsHandler(input)),
+  getTableProducts: readProcedure.input(getTableDataInput).query(({ input }) => getTableProductsHandler(input)),
   getProduct: readProcedure.input(getProductSchema).query(({ input }) => getProductHandler(input)),
   deleteProduct: writeProcedure.input(deleteProductSchema).mutation(({ input }) => deleteProductHandler(input)),
   createProduct: writeProcedure.input(createProductInput).mutation(({ input }) => createProductHandler(input)),
