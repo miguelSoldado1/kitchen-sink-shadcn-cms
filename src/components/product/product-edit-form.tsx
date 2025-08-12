@@ -6,11 +6,10 @@ import { tryCatch } from "@/app/try-catch";
 import { BasicInfoForm, basicInfoSchema } from "@/components/product/basic-info-form";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { trpc } from "@/lib/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { RecordInfoForm } from "./record-info-form";
 import type z from "zod";
 
 interface ProductEditFormProps {
@@ -49,26 +48,11 @@ export function ProductEditForm({ id }: ProductEditFormProps) {
         <AccordionItem value="record-info" className="mb-4 rounded-lg border">
           <AccordionTrigger className="px-4 py-3">Record Information</AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
-            <form className="space-y-4">
-              <div className="grid gap-2">
-                <Label>Id</Label>
-                <Input disabled value={query.data?.id} />
-              </div>
-              <div className="grid gap-2">
-                <Label>Created At</Label>
-                <Input disabled value={query.data?.createdAt ? new Date(query.data.createdAt).toLocaleString() : ""} />
-              </div>
-              <div className="grid gap-2">
-                <Label>Updated At</Label>
-                <Input disabled value={query.data?.updatedAt ? new Date(query.data.updatedAt).toLocaleString() : ""} />
-              </div>
-            </form>
+            <RecordInfoForm data={query.data} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="basic-info" className="mb-4 rounded-lg border">
-          <AccordionTrigger className="px-4 py-3">
-            <div className="text-left">Basic Information</div>
-          </AccordionTrigger>
+          <AccordionTrigger className="px-4 py-3">Basic Information</AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
             <BasicInfoForm form={form} onSubmit={onSubmit} disabled={query.isPending} />
           </AccordionContent>
