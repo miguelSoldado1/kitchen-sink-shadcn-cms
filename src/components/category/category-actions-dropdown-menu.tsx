@@ -1,17 +1,22 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import * as DropdownMenuCore from "@/components/ui/dropdown-menu";
 import { useDeleteEntity } from "@/hooks/use-delete-entity";
 import { trpc } from "@/lib/trpc/client";
 import { EditIcon, Ellipsis, TrashIcon } from "lucide-react";
 import { DeleteConfirmationDialog } from "../delete-confirmation-dialog";
+import { EditCategoryDialog } from "./edit-category-dialog";
+import type { category } from "@/lib/database/schema";
 
 interface CategoryActionsDropdownMenuProps {
+  category: typeof category.$inferSelect;
   id: number;
 }
 
-export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuProps) {
-  const utils = trpc.useUtils();
+export function CategoryActionsDropdownMenu({ id, category }: CategoryActionsDropdownMenuProps) {
+  const [editOpen, setEditOpen] = useState(false);
   const mutation = trpc.category.deleteCategory.useMutation();
+  const utils = trpc.useUtils();
   const deleteCategory = useDeleteEntity({
     invalidate: utils.category.getTableCategories.invalidate,
     entityName: "category",
@@ -28,7 +33,7 @@ export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuP
           </Button>
         </DropdownMenuCore.DropdownMenuTrigger>
         <DropdownMenuCore.DropdownMenuContent>
-          <DropdownMenuCore.DropdownMenuItem>
+          <DropdownMenuCore.DropdownMenuItem onClick={() => setEditOpen(true)}>
             <EditIcon className="size-4" />
             Edit
           </DropdownMenuCore.DropdownMenuItem>
@@ -48,6 +53,7 @@ export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuP
         onConfirm={deleteCategory.handleDelete}
         disabled={deleteCategory.isDeleting}
       />
+      <EditCategoryDialog open={editOpen} onOpenChange={setEditOpen} category={category} />
     </>
   );
 }

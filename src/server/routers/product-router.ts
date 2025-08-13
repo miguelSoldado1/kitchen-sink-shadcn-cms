@@ -140,12 +140,10 @@ async function updateProductHandler(input: z.infer<typeof updateProductInput>) {
       });
     }
 
-    const result = await db
+    return db
       .update(schema.product)
       .set({ ...input, price: input.price.toFixed(2), updatedAt: new Date() })
       .where(eq(schema.product.id, input.id));
-
-    return result;
   } catch (error) {
     if (error instanceof TRPCError) {
       throw error;
