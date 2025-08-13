@@ -10,30 +10,28 @@ import z from "zod";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import type { category } from "@/lib/database/schema";
-
-interface EditCategoryDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  category: typeof category.$inferSelect;
-}
 
 const editCategorySchema = z.object({
   name: z.string().min(2).max(100),
 });
 
-export function EditCategoryDialog({ open, onOpenChange, category }: EditCategoryDialogProps) {
+interface EditCategoryDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  categoryId: number;
+}
+
+export function EditCategoryDialog({ open, onOpenChange, categoryId }: EditCategoryDialogProps) {
   const utils = trpc.useUtils();
+  const query = trpc.category.getCategory.useQuery({ id: categoryId });
   const form = useForm<z.infer<typeof editCategorySchema>>({
     resolver: zodResolver(editCategorySchema),
-    defaultValues: {
-      name: category.name,
-    },
+    values: { name: query.data?.name ?? "" },
   });
 
   const mutation = trpc.category.updateCategory.useMutation();
   async function onSubmit(data: z.infer<typeof editCategorySchema>) {
-    const { error } = await tryCatch(mutation.mutateAsync({ id: category.id, ...data }));
+    const { error } = await tryCatch(mutation.mutateAsync({ id: categoryId, ...data }));
     if (error) {
       return toast.error("Failed to update category", { description: error.message });
     }
@@ -69,7 +67,7 @@ export function EditCategoryDialog({ open, onOpenChange, category }: EditCategor
           <DialogCore.DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogCore.DialogClose>
-          <Button type="submit" form="edit-category-form">
+          <Button type="submit" form="edit-category-form" disabled={mutation.isPending || query.isPending}>
             Save changes
           </Button>
         </DialogCore.DialogFooter>

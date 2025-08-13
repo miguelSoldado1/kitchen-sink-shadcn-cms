@@ -48,7 +48,7 @@ async function getTableCategoriesHandler(input: z.infer<typeof getTableDataInput
 const getCategorySchema = z.object({ id: z.number().positive() });
 
 async function getCategoryHandler(input: z.infer<typeof getCategorySchema>) {
-  const category = await db.select().from(schema.category).where(eq(schema.category.id, input.id)).limit(1).execute();
+  const [category] = await db.select().from(schema.category).where(eq(schema.category.id, input.id)).limit(1).execute();
   if (!category) {
     throw new TRPCError({
       code: "NOT_FOUND",
@@ -75,7 +75,7 @@ async function deleteCategoryHandler(input: z.infer<typeof deleteCategorySchema>
       });
     }
 
-    return db.delete(schema.category).where(eq(schema.category.id, input.id));
+    await db.delete(schema.category).where(eq(schema.category.id, input.id));
   } catch (error) {
     if (error instanceof TRPCError) {
       throw error;
@@ -108,7 +108,7 @@ async function updateCategoryHandler(input: z.infer<typeof updateCategorySchema>
       });
     }
 
-    return db
+    await db
       .update(schema.category)
       .set({ name: input.name, updatedAt: new Date() })
       .where(eq(schema.category.id, input.id));

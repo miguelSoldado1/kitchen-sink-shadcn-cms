@@ -140,7 +140,7 @@ async function updateProductHandler(input: z.infer<typeof updateProductInput>) {
       });
     }
 
-    return db
+    await db
       .update(schema.product)
       .set({ ...input, price: input.price.toFixed(2), updatedAt: new Date() })
       .where(eq(schema.product.id, input.id));

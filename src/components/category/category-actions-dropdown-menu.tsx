@@ -6,14 +6,12 @@ import { trpc } from "@/lib/trpc/client";
 import { EditIcon, Ellipsis, TrashIcon } from "lucide-react";
 import { DeleteConfirmationDialog } from "../delete-confirmation-dialog";
 import { EditCategoryDialog } from "./edit-category-dialog";
-import type { category } from "@/lib/database/schema";
 
 interface CategoryActionsDropdownMenuProps {
-  category: typeof category.$inferSelect;
   id: number;
 }
 
-export function CategoryActionsDropdownMenu({ id, category }: CategoryActionsDropdownMenuProps) {
+export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuProps) {
   const [editOpen, setEditOpen] = useState(false);
   const mutation = trpc.category.deleteCategory.useMutation();
   const utils = trpc.useUtils();
@@ -53,7 +51,7 @@ export function CategoryActionsDropdownMenu({ id, category }: CategoryActionsDro
         onConfirm={deleteCategory.handleDelete}
         disabled={deleteCategory.isDeleting}
       />
-      <EditCategoryDialog open={editOpen} onOpenChange={setEditOpen} category={category} />
+      <EditCategoryDialog open={editOpen} onOpenChange={setEditOpen} categoryId={id} />
     </>
   );
 }
