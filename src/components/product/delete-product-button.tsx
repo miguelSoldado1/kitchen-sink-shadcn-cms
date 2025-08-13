@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { useDeleteProduct } from "@/hooks/use-delete-product";
+import { useDeleteEntity } from "@/hooks/use-delete-entity";
+import { trpc } from "@/lib/trpc/client";
 import { TrashIcon } from "lucide-react";
 import { DeleteConfirmationDialog } from "../delete-confirmation-dialog";
 import { Button } from "../ui/button";
@@ -11,7 +12,15 @@ interface DeleteProductButtonProps {
 }
 
 export function DeleteProductButton({ id }: DeleteProductButtonProps) {
-  const deleteProduct = useDeleteProduct({ id, redirectHref: "/product" });
+  const utils = trpc.useUtils();
+  const mutation = trpc.product.deleteProduct.useMutation();
+  const deleteProduct = useDeleteEntity({
+    invalidate: utils.product.getTableProducts.invalidate,
+    redirectHref: "/product",
+    entityName: "product",
+    mutation,
+    id,
+  });
 
   return (
     <>

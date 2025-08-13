@@ -1,10 +1,11 @@
 import { db } from "@/lib/database/drizzle";
 import * as schema from "@/lib/database/schema";
-import { count } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+import { count, eq } from "drizzle-orm";
+import z from "zod";
 import { buildQueryParams, getTableDataInput } from "../table-query";
-import { readProcedure, router } from "../trpc";
+import { readProcedure, router, writeProcedure } from "../trpc";
 import type { TableQueryConfig } from "../table-query";
-import type z from "zod";
 
 const SORT_COLUMNS = {
   createdAt: schema.category.createdAt,
@@ -44,6 +45,37 @@ async function getTableCategoriesHandler(input: z.infer<typeof getTableDataInput
   };
 }
 
+const deleteCategorySchema = z.object({ id: z.number().positive() });
+
+async function deleteCategoryHandler(input: z.infer<typeof deleteCategorySchema>) {
+  try {
+    const [existingCategory] = await db
+      .select({ id: schema.category.id })
+      .from(schema.category)
+      .where(eq(schema.category.id, input.id));
+
+    if (!existingCategory) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `Category with id ${input.id} not found`,
+      });
+    }
+
+    return db.delete(schema.category).where(eq(schema.category.id, input.id));
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to delete product",
+      cause: error,
+    });
+  }
+}
+
 export const categoryRouter = router({
   getTableCategories: readProcedure.input(getTableDataInput).query(({ input }) => getTableCategoriesHandler(input)),
+  deleteCategory: writeProcedure.input(deleteCategorySchema).mutation(({ input }) => deleteCategoryHandler(input)),
 });

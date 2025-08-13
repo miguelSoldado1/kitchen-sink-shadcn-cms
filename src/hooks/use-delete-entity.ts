@@ -4,42 +4,41 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { tryCatch } from "@/app/try-catch";
-import { trpc } from "@/lib/trpc/client";
 
-interface UseDeleteProductOptions {
+interface UseDeleteEntityProps {
   id: number;
   redirectHref?: string;
+  mutation: { mutateAsync: (input: { id: number }) => Promise<unknown>; isPending: boolean };
+  invalidate: () => void;
+  entityName?: string;
 }
 
-export function useDeleteProduct(options: UseDeleteProductOptions) {
+export function useDeleteEntity({ id, redirectHref, mutation, invalidate, entityName = "item" }: UseDeleteEntityProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const utils = trpc.useUtils();
   const router = useRouter();
 
-  const mutation = trpc.product.deleteProduct.useMutation();
-
   async function handleDelete() {
-    const result = await tryCatch(mutation.mutateAsync({ id: options.id }));
+    const result = await tryCatch(mutation.mutateAsync({ id }));
 
     if (result.error) {
-      return toast.error("Failed to delete product", {
+      return toast.error(`Failed to delete ${entityName}`, {
         description: result.error?.message ?? "An unknown error occurred.",
       });
     }
 
-    toast.success("Successfully deleted product");
-    utils.product.getTableProducts.invalidate();
+    invalidate();
     setShowDeleteDialog(false);
+    toast.success(`Successfully deleted ${entityName}`);
 
-    if (options.redirectHref) {
-      router.push(options.redirectHref);
+    if (redirectHref) {
+      router.push(redirectHref);
     }
   }
 
   return {
+    handleDelete,
     showDeleteDialog,
     setShowDeleteDialog,
-    handleDelete,
     isDeleting: mutation.isPending,
     openDeleteDialog: () => setShowDeleteDialog(true),
   };

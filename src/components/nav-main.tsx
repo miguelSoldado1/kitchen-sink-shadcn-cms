@@ -10,6 +10,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import clsx from "clsx";
 import { ChevronRight } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -32,7 +33,7 @@ export function NavMain({ items }: NavMainProps) {
   return (
     <SidebarMenu className="p-2">
       {items.map((item) => (
-        <SidebarMenuItem key={item.title}>
+        <SidebarMenuItem key={item.title} className={clsx(pathname === item.url && "bg-muted rounded-lg")}>
           {item.items && item.items.length > 0 ? (
             <Collapsible
               asChild
@@ -50,7 +51,10 @@ export function NavMain({ items }: NavMainProps) {
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     {item.items.map((subItem) => (
-                      <SidebarMenuSubItem key={subItem.title}>
+                      <SidebarMenuSubItem
+                        key={subItem.title}
+                        className={clsx(pathname === item.url && "bg-muted rounded-lg")}
+                      >
                         <SidebarMenuSubButton asChild>
                           <a href={subItem.url}>
                             {subItem.icon && <subItem.icon />}

@@ -71,7 +71,7 @@ export const columns: ColumnDef<typeof product.$inferSelect>[] = [
   {
     id: "actions",
     cell({ row }) {
-      return <ProductActionsDropdownMenu id={row.original.id} editHref={`/product/edit/${row.original.id}`} />;
+      return <ProductActionsDropdownMenu id={row.original.id} />;
     },
     size: 20,
   },

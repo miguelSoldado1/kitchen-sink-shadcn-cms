@@ -1,6 +1,6 @@
 import { formatDate } from "@/lib/format";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
-import { ProductActionsDropdownMenu } from "../product/product-actions-dropdown-menu";
+import { CategoryActionsDropdownMenu } from "./category-actions-dropdown-menu";
 import type { category } from "@/lib/database/schema";
 import type { ColumnDef } from "@tanstack/react-table";
 
@@ -50,7 +50,7 @@ export const columns: ColumnDef<typeof category.$inferSelect>[] = [
   {
     id: "actions",
     cell({ row }) {
-      return <ProductActionsDropdownMenu id={row.original.id} editHref={`/category/edit/${row.original.id}`} />;
+      return <CategoryActionsDropdownMenu id={row.original.id} />;
     },
     size: 20,
   },

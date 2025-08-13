@@ -1,21 +1,20 @@
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import * as DropdownMenuCore from "@/components/ui/dropdown-menu";
 import { useDeleteEntity } from "@/hooks/use-delete-entity";
 import { trpc } from "@/lib/trpc/client";
-import { EditIcon, EllipsisIcon, TrashIcon } from "lucide-react";
+import { EditIcon, Ellipsis, TrashIcon } from "lucide-react";
 import { DeleteConfirmationDialog } from "../delete-confirmation-dialog";
 
-interface ProductActionsDropdownMenuProps {
+interface CategoryActionsDropdownMenuProps {
   id: number;
 }
 
-export function ProductActionsDropdownMenu({ id }: ProductActionsDropdownMenuProps) {
+export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuProps) {
   const utils = trpc.useUtils();
-  const mutation = trpc.product.deleteProduct.useMutation();
-  const deleteProduct = useDeleteEntity({
-    invalidate: utils.product.getTableProducts.invalidate,
-    entityName: "product",
+  const mutation = trpc.category.deleteCategory.useMutation();
+  const deleteCategory = useDeleteEntity({
+    invalidate: utils.category.getTableCategories.invalidate,
+    entityName: "category",
     mutation,
     id,
   });
@@ -25,20 +24,18 @@ export function ProductActionsDropdownMenu({ id }: ProductActionsDropdownMenuPro
       <DropdownMenuCore.DropdownMenu>
         <DropdownMenuCore.DropdownMenuTrigger asChild>
           <Button aria-label="Open menu" variant="ghost" className="data-[state=open]:bg-muted flex size-8 p-0">
-            <EllipsisIcon className="size-4" aria-hidden="true" />
+            <Ellipsis className="size-4" aria-hidden="true" />
           </Button>
         </DropdownMenuCore.DropdownMenuTrigger>
         <DropdownMenuCore.DropdownMenuContent>
-          <DropdownMenuCore.DropdownMenuItem asChild>
-            <Link href={`/product/edit/${id}`} className="cursor-pointer">
-              <EditIcon className="size-4" />
-              Edit
-            </Link>
+          <DropdownMenuCore.DropdownMenuItem>
+            <EditIcon className="size-4" />
+            Edit
           </DropdownMenuCore.DropdownMenuItem>
           <DropdownMenuCore.DropdownMenuItem
             className="text-destructive focus:text-destructive cursor-pointer"
-            onClick={deleteProduct.openDeleteDialog}
-            disabled={deleteProduct.isDeleting}
+            onClick={deleteCategory.openDeleteDialog}
+            disabled={deleteCategory.isDeleting}
           >
             <TrashIcon className="size-4" />
             Delete
@@ -46,10 +43,10 @@ export function ProductActionsDropdownMenu({ id }: ProductActionsDropdownMenuPro
         </DropdownMenuCore.DropdownMenuContent>
       </DropdownMenuCore.DropdownMenu>
       <DeleteConfirmationDialog
-        open={deleteProduct.showDeleteDialog}
-        onOpenChange={deleteProduct.setShowDeleteDialog}
-        onConfirm={deleteProduct.handleDelete}
-        disabled={deleteProduct.isDeleting}
+        open={deleteCategory.showDeleteDialog}
+        onOpenChange={deleteCategory.setShowDeleteDialog}
+        onConfirm={deleteCategory.handleDelete}
+        disabled={deleteCategory.isDeleting}
       />
     </>
   );

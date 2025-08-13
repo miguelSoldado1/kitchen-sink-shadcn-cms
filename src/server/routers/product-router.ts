@@ -80,8 +80,7 @@ async function deleteProductHandler(input: z.infer<typeof deleteProductSchema>) 
       });
     }
 
-    const result = await db.delete(schema.product).where(eq(schema.product.id, input.id));
-    return result;
+    return db.delete(schema.product).where(eq(schema.product.id, input.id));
   } catch (error) {
     if (error instanceof TRPCError) {
       throw error;
