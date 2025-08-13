@@ -1,6 +1,6 @@
-import React from "react";
 import z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { Form, FormField } from "../ui/form";
+import { FormItemWrapper } from "../ui/form-item-wrapper";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import type { SubmitHandler, UseFormReturn } from "react-hook-form";
@@ -26,66 +26,50 @@ export function BasicInfoForm({ form, onSubmit, disabled }: BasicInfoFormProps) 
           control={form.control}
           name="name"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input {...field} disabled={disabled} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+            <FormItemWrapper label="Name">
+              <Input {...field} disabled={disabled} />
+            </FormItemWrapper>
           )}
         />
         <FormField
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea {...field} disabled={disabled} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+            <FormItemWrapper label="Description">
+              <Textarea {...field} disabled={disabled} />
+            </FormItemWrapper>
           )}
         />
         <FormField
           control={form.control}
           name="sku"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>SKU</FormLabel>
-              <FormControl>
-                <Input {...field} disabled={disabled} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+            <FormItemWrapper label="SKU">
+              <Input {...field} disabled={disabled} />
+            </FormItemWrapper>
           )}
         />
         <FormField
           control={form.control}
           name="price"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Price</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    className="peer ps-6 pe-12"
-                    min="0"
-                    {...field}
-                    value={field.value}
-                    onChange={(e) => field.onChange(Number(e.target.value))}
-                    disabled={disabled}
-                  />
-                  <span className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-sm peer-disabled:opacity-50">
-                    $
-                  </span>
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+            <FormItemWrapper label="Price">
+              <div className="relative">
+                <Input
+                  type="number"
+                  step="0.01"
+                  className="peer ps-6 pe-12"
+                  min="0"
+                  {...field}
+                  value={field.value}
+                  onChange={(e) => field.onChange(Number(e.target.value))}
+                  disabled={disabled}
+                />
+                <span className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-sm peer-disabled:opacity-50">
+                  $
+                </span>
+              </div>
+            </FormItemWrapper>
           )}
         />
       </form>

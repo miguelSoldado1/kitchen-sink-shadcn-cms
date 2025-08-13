@@ -8,7 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { Button } from "../ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { Form, FormField } from "../ui/form";
+import { FormItemWrapper } from "../ui/form-item-wrapper";
 import { Input } from "../ui/input";
 
 const editCategorySchema = z.object({
@@ -44,21 +45,19 @@ export function EditCategoryDialog({ open, onOpenChange, categoryId }: EditCateg
   return (
     <DialogCore.Dialog open={open} onOpenChange={onOpenChange}>
       <DialogCore.DialogContent>
-        <DialogCore.DialogTitle>Edit Category</DialogCore.DialogTitle>
-        <DialogCore.DialogDescription>Make changes to your category.</DialogCore.DialogDescription>
+        <DialogCore.DialogHeader>
+          <DialogCore.DialogTitle>Edit Category</DialogCore.DialogTitle>
+          <DialogCore.DialogDescription>Make changes to your category.</DialogCore.DialogDescription>
+        </DialogCore.DialogHeader>
         <Form {...form}>
           <form id="edit-category-form" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+                <FormItemWrapper label="Name">
+                  <Input {...field} />
+                </FormItemWrapper>
               )}
             />
           </form>
