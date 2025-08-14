@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { toast } from "sonner";
 import { tryCatch } from "@/app/try-catch";
 import * as DialogCore from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { PlusIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { Button } from "../ui/button";
@@ -12,45 +14,45 @@ import { Form, FormField } from "../ui/form";
 import { FormItemWrapper } from "../ui/form-item-wrapper";
 import { Input } from "../ui/input";
 
-const editCategorySchema = z.object({
+const createCategoryForm = z.object({
   name: z.string().min(2).max(100),
 });
 
-interface EditCategoryDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  categoryId: number;
-}
-
-export function EditCategoryDialog({ open, onOpenChange, categoryId }: EditCategoryDialogProps) {
+export function CategoryCreateForm() {
   const utils = trpc.useUtils();
-  const query = trpc.category.getCategory.useQuery({ id: categoryId });
-  const form = useForm<z.infer<typeof editCategorySchema>>({
-    resolver: zodResolver(editCategorySchema),
-    values: { name: query.data?.name ?? "" },
+  const [open, setOpen] = useState(false);
+  const form = useForm<z.infer<typeof createCategoryForm>>({
+    resolver: zodResolver(createCategoryForm),
+    defaultValues: { name: "" },
   });
 
-  const mutation = trpc.category.updateCategory.useMutation();
-  async function onSubmit(data: z.infer<typeof editCategorySchema>) {
-    const { error } = await tryCatch(mutation.mutateAsync({ id: categoryId, ...data }));
+  const mutation = trpc.category.createCategory.useMutation();
+  async function onSubmit(data: z.infer<typeof createCategoryForm>) {
+    const { error } = await tryCatch(mutation.mutateAsync(data));
     if (error) {
-      return toast.error("Failed to update category", { description: error.message });
+      return toast.error("Failed to create category", { description: error.message });
     }
 
-    toast.success("Category updated successfully");
+    toast.success("Category created successfully");
     utils.category.getTableCategories.invalidate();
-    onOpenChange(false);
+    setOpen(false);
   }
 
   return (
-    <DialogCore.Dialog open={open} onOpenChange={onOpenChange}>
+    <DialogCore.Dialog open={open} onOpenChange={setOpen}>
+      <DialogCore.DialogTrigger asChild>
+        <Button>
+          <PlusIcon className="size-4" />
+          Add Category
+        </Button>
+      </DialogCore.DialogTrigger>
       <DialogCore.DialogContent>
         <DialogCore.DialogHeader>
-          <DialogCore.DialogTitle>Edit Category</DialogCore.DialogTitle>
-          <DialogCore.DialogDescription>Make changes to your category.</DialogCore.DialogDescription>
+          <DialogCore.DialogTitle>Create Category</DialogCore.DialogTitle>
+          <DialogCore.DialogDescription>Create a new category.</DialogCore.DialogDescription>
         </DialogCore.DialogHeader>
         <Form {...form}>
-          <form id="edit-category-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <form id="create-category-form" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               name="name"
               control={form.control}
@@ -66,7 +68,7 @@ export function EditCategoryDialog({ open, onOpenChange, categoryId }: EditCateg
           <DialogCore.DialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </DialogCore.DialogClose>
-          <Button type="submit" form="edit-category-form" disabled={form.formState.isSubmitting || query.isPending}>
+          <Button type="submit" form="create-category-form" disabled={form.formState.isSubmitting}>
             Save changes
           </Button>
         </DialogCore.DialogFooter>

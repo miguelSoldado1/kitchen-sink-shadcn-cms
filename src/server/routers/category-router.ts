@@ -89,6 +89,23 @@ async function deleteCategoryHandler(input: z.infer<typeof deleteCategorySchema>
   }
 }
 
+const createCategorySchema = z.object({
+  name: z.string().min(2).max(100),
+});
+
+async function createCategoryHandler(input: z.infer<typeof createCategorySchema>) {
+  try {
+    const [category] = await db.insert(schema.category).values(input).returning({ id: schema.category.id });
+    return category.id;
+  } catch (error) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to create category",
+      cause: error,
+    });
+  }
+}
+
 const updateCategorySchema = z.object({
   id: z.number().positive(),
   name: z.string().min(2).max(100),
@@ -129,5 +146,6 @@ export const categoryRouter = router({
   getTableCategories: readProcedure.input(getTableDataInput).query(({ input }) => getTableCategoriesHandler(input)),
   getCategory: readProcedure.input(getCategorySchema).query(({ input }) => getCategoryHandler(input)),
   deleteCategory: writeProcedure.input(deleteCategorySchema).mutation(({ input }) => deleteCategoryHandler(input)),
+  createCategory: writeProcedure.input(createCategorySchema).mutation(({ input }) => createCategoryHandler(input)),
   updateCategory: writeProcedure.input(updateCategorySchema).mutation(({ input }) => updateCategoryHandler(input)),
 });
