@@ -3,18 +3,13 @@
 import { toast } from "sonner";
 import { tryCatch } from "@/app/try-catch";
 import * as DialogCore from "@/components/ui/dialog";
+import { useCategoryForm } from "@/hooks/use-category-form";
 import { trpc } from "@/lib/trpc/client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import z from "zod";
 import { Button } from "../ui/button";
 import { Form, FormField } from "../ui/form";
 import { FormItemWrapper } from "../ui/form-item-wrapper";
 import { Input } from "../ui/input";
-
-const editCategorySchema = z.object({
-  name: z.string().min(2).max(100),
-});
+import type { CategoryFormType } from "@/hooks/use-category-form";
 
 interface EditCategoryDialogProps {
   open: boolean;
@@ -23,15 +18,12 @@ interface EditCategoryDialogProps {
 }
 
 export function EditCategoryDialog({ open, onOpenChange, categoryId }: EditCategoryDialogProps) {
-  const utils = trpc.useUtils();
-  const query = trpc.category.getCategory.useQuery({ id: categoryId });
-  const form = useForm<z.infer<typeof editCategorySchema>>({
-    resolver: zodResolver(editCategorySchema),
-    values: { name: query.data?.name ?? "" },
-  });
-
   const mutation = trpc.category.updateCategory.useMutation();
-  async function onSubmit(data: z.infer<typeof editCategorySchema>) {
+  const query = trpc.category.getCategory.useQuery({ id: categoryId });
+  const form = useCategoryForm({ values: { name: query.data?.name ?? "" } });
+  const utils = trpc.useUtils();
+
+  async function onSubmit(data: CategoryFormType) {
     const { error } = await tryCatch(mutation.mutateAsync({ id: categoryId, ...data }));
     if (error) {
       return toast.error("Failed to update category", { description: error.message });

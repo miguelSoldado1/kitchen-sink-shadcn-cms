@@ -4,30 +4,22 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { tryCatch } from "@/app/try-catch";
 import * as DialogCore from "@/components/ui/dialog";
+import { useCategoryForm } from "@/hooks/use-category-form";
 import { trpc } from "@/lib/trpc/client";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon } from "lucide-react";
-import { useForm } from "react-hook-form";
-import z from "zod";
 import { Button } from "../ui/button";
 import { Form, FormField } from "../ui/form";
 import { FormItemWrapper } from "../ui/form-item-wrapper";
 import { Input } from "../ui/input";
-
-const createCategoryForm = z.object({
-  name: z.string().min(2).max(100),
-});
+import type { CategoryFormType } from "@/hooks/use-category-form";
 
 export function CategoryCreateForm() {
-  const utils = trpc.useUtils();
-  const [open, setOpen] = useState(false);
-  const form = useForm<z.infer<typeof createCategoryForm>>({
-    resolver: zodResolver(createCategoryForm),
-    defaultValues: { name: "" },
-  });
-
   const mutation = trpc.category.createCategory.useMutation();
-  async function onSubmit(data: z.infer<typeof createCategoryForm>) {
+  const form = useCategoryForm({ defaultValues: { name: "" } });
+  const [open, setOpen] = useState(false);
+  const utils = trpc.useUtils();
+
+  async function onSubmit(data: CategoryFormType) {
     const { error } = await tryCatch(mutation.mutateAsync(data));
     if (error) {
       return toast.error("Failed to create category", { description: error.message });
