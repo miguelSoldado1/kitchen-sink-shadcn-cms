@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useDeleteEntity } from "@/hooks/use-delete-entity";
 import { trpc } from "@/lib/trpc/client";
 import { TrashIcon } from "lucide-react";
@@ -12,14 +12,15 @@ interface DeleteProductButtonProps {
 }
 
 export function DeleteProductButton({ id }: DeleteProductButtonProps) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   const utils = trpc.useUtils();
   const mutation = trpc.product.deleteProduct.useMutation();
   const deleteProduct = useDeleteEntity({
+    mutateAsync: () => mutation.mutateAsync({ id }),
     invalidate: utils.product.getTableProducts.invalidate,
     redirectHref: "/product",
     entityName: "product",
-    mutation,
-    id,
   });
 
   return (
@@ -27,17 +28,17 @@ export function DeleteProductButton({ id }: DeleteProductButtonProps) {
       <Button
         variant="destructive"
         className="cursor-pointer"
-        onClick={deleteProduct.openDeleteDialog}
-        disabled={deleteProduct.isDeleting}
+        onClick={() => setShowDeleteDialog(true)}
+        disabled={mutation.isPending}
       >
         <TrashIcon className="size-4" />
         Delete Product
       </Button>
       <DeleteConfirmationDialog
-        open={deleteProduct.showDeleteDialog}
-        onOpenChange={deleteProduct.setShowDeleteDialog}
-        onConfirm={deleteProduct.handleDelete}
-        disabled={deleteProduct.isDeleting}
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={deleteProduct}
+        disabled={mutation.isPending}
       />
     </>
   );

@@ -12,14 +12,15 @@ interface CategoryActionsDropdownMenuProps {
 }
 
 export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuProps) {
-  const [editOpen, setEditOpen] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   const mutation = trpc.category.deleteCategory.useMutation();
   const utils = trpc.useUtils();
   const deleteCategory = useDeleteEntity({
     invalidate: utils.category.getTableCategories.invalidate,
+    mutateAsync: () => mutation.mutateAsync({ id }),
     entityName: "category",
-    mutation,
-    id,
   });
 
   return (
@@ -31,14 +32,14 @@ export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuP
           </Button>
         </DropdownMenuCore.DropdownMenuTrigger>
         <DropdownMenuCore.DropdownMenuContent>
-          <DropdownMenuCore.DropdownMenuItem onClick={() => setEditOpen(true)}>
+          <DropdownMenuCore.DropdownMenuItem onClick={() => setShowEditDialog(true)}>
             <EditIcon className="size-4" />
             Edit
           </DropdownMenuCore.DropdownMenuItem>
           <DropdownMenuCore.DropdownMenuItem
             className="text-destructive focus:text-destructive cursor-pointer"
-            onClick={deleteCategory.openDeleteDialog}
-            disabled={deleteCategory.isDeleting}
+            onClick={() => setShowDeleteDialog(true)}
+            disabled={mutation.isPending}
           >
             <TrashIcon className="size-4" />
             Delete
@@ -46,12 +47,12 @@ export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuP
         </DropdownMenuCore.DropdownMenuContent>
       </DropdownMenuCore.DropdownMenu>
       <DeleteConfirmationDialog
-        open={deleteCategory.showDeleteDialog}
-        onOpenChange={deleteCategory.setShowDeleteDialog}
-        onConfirm={deleteCategory.handleDelete}
-        disabled={deleteCategory.isDeleting}
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={deleteCategory}
+        disabled={mutation.isPending}
       />
-      <EditCategoryDialog open={editOpen} onOpenChange={setEditOpen} categoryId={id} />
+      <EditCategoryDialog open={showEditDialog} onOpenChange={setShowEditDialog} categoryId={id} />
     </>
   );
 }

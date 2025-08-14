@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import * as DropdownMenuCore from "@/components/ui/dropdown-menu";
@@ -11,13 +12,14 @@ interface ProductActionsDropdownMenuProps {
 }
 
 export function ProductActionsDropdownMenu({ id }: ProductActionsDropdownMenuProps) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
   const utils = trpc.useUtils();
   const mutation = trpc.product.deleteProduct.useMutation();
   const deleteProduct = useDeleteEntity({
+    mutateAsync: () => mutation.mutateAsync({ id }),
     invalidate: utils.product.getTableProducts.invalidate,
     entityName: "product",
-    mutation,
-    id,
   });
 
   return (
@@ -37,8 +39,8 @@ export function ProductActionsDropdownMenu({ id }: ProductActionsDropdownMenuPro
           </DropdownMenuCore.DropdownMenuItem>
           <DropdownMenuCore.DropdownMenuItem
             className="text-destructive focus:text-destructive cursor-pointer"
-            onClick={deleteProduct.openDeleteDialog}
-            disabled={deleteProduct.isDeleting}
+            onClick={() => setShowDeleteDialog(true)}
+            disabled={mutation.isPending}
           >
             <TrashIcon className="size-4" />
             Delete
@@ -46,10 +48,10 @@ export function ProductActionsDropdownMenu({ id }: ProductActionsDropdownMenuPro
         </DropdownMenuCore.DropdownMenuContent>
       </DropdownMenuCore.DropdownMenu>
       <DeleteConfirmationDialog
-        open={deleteProduct.showDeleteDialog}
-        onOpenChange={deleteProduct.setShowDeleteDialog}
-        onConfirm={deleteProduct.handleDelete}
-        disabled={deleteProduct.isDeleting}
+        open={showDeleteDialog}
+        onOpenChange={setShowDeleteDialog}
+        onConfirm={deleteProduct}
+        disabled={mutation.isPending}
       />
     </>
   );
