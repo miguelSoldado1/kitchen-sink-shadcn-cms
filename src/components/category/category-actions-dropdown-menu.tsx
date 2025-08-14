@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import * as DropdownMenuCore from "@/components/ui/dropdown-menu";
+import * as ActionsMenuCore from "@/components/actions-menu";
 import { useDeleteEntity } from "@/hooks/use-delete-entity";
 import { trpc } from "@/lib/trpc/client";
-import { EditIcon, Ellipsis, TrashIcon } from "lucide-react";
 import { DeleteConfirmationDialog } from "../delete-confirmation-dialog";
 import { EditCategoryDialog } from "./edit-category-dialog";
 
@@ -25,27 +23,13 @@ export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuP
 
   return (
     <>
-      <DropdownMenuCore.DropdownMenu>
-        <DropdownMenuCore.DropdownMenuTrigger asChild>
-          <Button aria-label="Open menu" variant="ghost" className="data-[state=open]:bg-muted flex size-8 p-0">
-            <Ellipsis className="size-4" aria-hidden="true" />
-          </Button>
-        </DropdownMenuCore.DropdownMenuTrigger>
-        <DropdownMenuCore.DropdownMenuContent>
-          <DropdownMenuCore.DropdownMenuItem onClick={() => setShowEditDialog(true)}>
-            <EditIcon className="size-4" />
-            Edit
-          </DropdownMenuCore.DropdownMenuItem>
-          <DropdownMenuCore.DropdownMenuItem
-            className="text-destructive focus:text-destructive cursor-pointer"
-            onClick={() => setShowDeleteDialog(true)}
-            disabled={mutation.isPending}
-          >
-            <TrashIcon className="size-4" />
-            Delete
-          </DropdownMenuCore.DropdownMenuItem>
-        </DropdownMenuCore.DropdownMenuContent>
-      </DropdownMenuCore.DropdownMenu>
+      <ActionsMenuCore.ActionsMenu>
+        <ActionsMenuCore.ActionsMenuTriggerEllipsis />
+        <ActionsMenuCore.ActionsContent>
+          <ActionsMenuCore.ActionsMenuEditItemButton onClick={() => setShowEditDialog(true)} />
+          <ActionsMenuCore.ActionsMenuDeleteButton onClick={() => setShowDeleteDialog(true)} />
+        </ActionsMenuCore.ActionsContent>
+      </ActionsMenuCore.ActionsMenu>
       <DeleteConfirmationDialog
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
