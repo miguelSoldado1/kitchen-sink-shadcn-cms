@@ -1,12 +1,11 @@
 import { auth } from "@/lib/auth/auth";
-import { db } from "@/lib/database/drizzle";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 export async function createTRPCContext(opts: { headers: Headers }) {
   const authSession = await auth.api.getSession({ headers: opts.headers });
-  return { db, user: authSession?.user };
+  return { user: authSession?.user };
 }
 
 type Context = Awaited<ReturnType<typeof createTRPCContext>>;

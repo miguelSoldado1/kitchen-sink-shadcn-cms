@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { decimal, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
 
 export * from "../auth/auth-schema";
@@ -27,4 +28,11 @@ export const productCategory = pgTable("product_category", {
   categoryId: serial("category_id")
     .references(() => category.id, { onDelete: "cascade" })
     .notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+export const productCategoryRelations = relations(productCategory, ({ one }) => ({
+  product: one(product, { fields: [productCategory.productId], references: [product.id] }),
+  category: one(category, { fields: [productCategory.categoryId], references: [category.id] }),
+}));

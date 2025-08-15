@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { tryCatch } from "@/app/try-catch";
 import { BasicInfoForm, basicInfoSchema } from "@/components/product/basic-info-form";
+import { ProductCategoryTable } from "@/components/product/product-categories/product-category-table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc/client";
@@ -55,6 +56,12 @@ export function ProductEditForm({ id }: ProductEditFormProps) {
           <AccordionTrigger className="px-4 py-3">Basic Information</AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
             <BasicInfoForm form={form} onSubmit={onSubmit} disabled={query.isPending} />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="product-categories" className="mb-4 rounded-lg border">
+          <AccordionTrigger className="px-4 py-3">Product Categories</AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <ProductCategoryTable productId={id} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
