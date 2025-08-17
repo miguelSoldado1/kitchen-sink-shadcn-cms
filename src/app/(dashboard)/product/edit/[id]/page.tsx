@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { PageHeader, PageLayout } from "@/components/page-layout";
 import { DeleteProductButton } from "@/components/product/delete-product-button";
@@ -24,7 +25,9 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
       <PageHeader title={TITLE} description={DESCRIPTION} backHref="/product">
         <DeleteProductButton id={id.data} />
       </PageHeader>
-      <ProductEditForm id={id.data} />
+      <Suspense>
+        <ProductEditForm id={id.data} />
+      </Suspense>
     </PageLayout>
   );
 }

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { CategoryCreateForm } from "@/components/category/category-create-form";
 import { CategoryTable } from "@/components/category/category-table";
 import { PageHeader, PageLayout } from "@/components/page-layout";
@@ -11,7 +12,9 @@ export default function CategoryPage() {
       <PageHeader title={TITLE} description={DESCRIPTION}>
         <CategoryCreateForm />
       </PageHeader>
-      <CategoryTable />
+      <Suspense>
+        <CategoryTable />
+      </Suspense>
     </PageLayout>
   );
 }

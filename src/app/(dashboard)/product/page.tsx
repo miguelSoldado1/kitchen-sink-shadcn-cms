@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { PageHeader, PageLayout } from "@/components/page-layout";
 import { ProductTable } from "@/components/product/product-table";
@@ -18,7 +19,9 @@ export default function ProductPage() {
           </Link>
         </Button>
       </PageHeader>
-      <ProductTable />
+      <Suspense>
+        <ProductTable />
+      </Suspense>
     </PageLayout>
   );
 }
