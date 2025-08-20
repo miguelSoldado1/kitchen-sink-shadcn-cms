@@ -1,9 +1,10 @@
 import { db } from "@/lib/database/drizzle";
 import * as schema from "@/lib/database/schema";
+import { TRPCError } from "@trpc/server";
 import { and, count, eq } from "drizzle-orm";
 import z from "zod";
 import { buildQueryParams, getTableDataInput } from "../table-query";
-import { readProcedure, router } from "../trpc";
+import { readProcedure, router, writeProcedure } from "../trpc";
 import type { TableQueryConfig } from "../table-query";
 
 const SORT_COLUMNS = {
@@ -30,6 +31,7 @@ const getTableProductCategoryInput = getTableDataInput.extend({ productId: z.num
 
 async function getTableProductCategoryHandler(input: z.infer<typeof getTableProductCategoryInput>) {
   const queryParams = buildQueryParams(input, CONFIG);
+  console.log("queryParams", queryParams);
 
   const combinedWhereClause = queryParams.whereClause
     ? and(eq(schema.productCategory.productId, input.productId), queryParams.whereClause)
@@ -54,8 +56,34 @@ async function getTableProductCategoryHandler(input: z.infer<typeof getTableProd
   };
 }
 
+const createProductCategoryInput = z.object({
+  productId: z.number(),
+  categories: z.array(z.coerce.number()).min(1),
+});
+
+async function createProductCategoryHandler(input: z.infer<typeof createProductCategoryInput>) {
+  const [existingProduct] = await db
+    .select({ id: schema.product.id })
+    .from(schema.product)
+    .where(eq(schema.product.id, input.productId));
+
+  if (!existingProduct) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: `Product with id ${input.productId} not found`,
+    });
+  }
+
+  return db
+    .insert(schema.productCategory)
+    .values(input.categories.map((categoryId) => ({ productId: input.productId, categoryId })));
+}
+
 export const productCategoryRouter = router({
   getTableProductCategories: readProcedure
     .input(getTableProductCategoryInput)
     .query(({ input }) => getTableProductCategoryHandler(input)),
+  createProductCategory: writeProcedure
+    .input(createProductCategoryInput)
+    .mutation(({ input }) => createProductCategoryHandler(input)),
 });

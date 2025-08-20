@@ -16,11 +16,12 @@ export interface Option {
   /** Group the options by providing key. */
   [key: string]: string | boolean | undefined;
 }
+
 interface GroupOption {
   [key: string]: Option[];
 }
 
-interface MultipleSelectorProps {
+interface MultiSelectProps {
   value?: Option[];
   defaultOptions?: Option[];
   /** manually controlled options */
@@ -39,12 +40,6 @@ interface MultipleSelectorProps {
   triggerSearchOnFocus?: boolean;
   /** async search */
   onSearch?: (value: string) => Promise<Option[]>;
-  /**
-   * sync search. This search will not showing loadingIndicator.
-   * The rest props are the same as async search.
-   * i.e.: creatable, groupBy, delay.
-   **/
-  onSearchSync?: (value: string) => Option[];
   onChange?: (options: Option[]) => void;
   /** Limit the maximum number of selected options. */
   maxSelected?: number;
@@ -75,9 +70,13 @@ interface MultipleSelectorProps {
   >;
   /** hide the clear all button. */
   hideClearAllButton?: boolean;
+  /** Callback when user scrolls to bottom and more data should be loaded */
+  onFetchMore?: () => void;
+  /** Whether more data is being loaded */
+  isLoadingMore?: boolean;
 }
 
-export interface MultipleSelectorRef {
+export interface MultiSelectRef {
   selectedValue: Option[];
   input: HTMLInputElement;
   focus: () => void;
@@ -119,24 +118,6 @@ function transToGroupOption(options: Option[], groupBy?: string) {
   return groupOption;
 }
 
-function removePickedOption(groupOption: GroupOption, picked: Option[]) {
-  const cloneOption = JSON.parse(JSON.stringify(groupOption)) as GroupOption;
-
-  for (const [key, value] of Object.entries(cloneOption)) {
-    cloneOption[key] = value.filter((val) => !picked.find((p) => p.value === val.value));
-  }
-  return cloneOption;
-}
-
-function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
-  for (const [, value] of Object.entries(groupOption)) {
-    if (value.some((option) => targetOption.find((p) => p.value === option.value))) {
-      return true;
-    }
-  }
-  return false;
-}
-
 const CommandEmpty = ({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) => {
   const render = useCommandState((state) => state.filtered.count === 0);
 
@@ -149,7 +130,7 @@ const CommandEmpty = ({ className, ...props }: React.ComponentProps<typeof Comma
 
 CommandEmpty.displayName = "CommandEmpty";
 
-const MultipleSelector = ({
+const MultiSelect = ({
   value,
   onChange,
   placeholder,
@@ -157,7 +138,6 @@ const MultipleSelector = ({
   options: arrayOptions,
   delay,
   onSearch,
-  onSearchSync,
   loadingIndicator,
   emptyIndicator,
   maxSelected = Number.MAX_SAFE_INTEGER,
@@ -173,12 +153,14 @@ const MultipleSelector = ({
   commandProps,
   inputProps,
   hideClearAllButton = false,
-}: MultipleSelectorProps) => {
+  onFetchMore,
+  isLoadingMore = false,
+}: MultiSelectProps) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [open, setOpen] = React.useState(false);
   const [onScrollbar, setOnScrollbar] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
-  const dropdownRef = React.useRef<HTMLDivElement>(null); // Added this
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   const [selected, setSelected] = React.useState<Option[]>(value || []);
   const [options, setOptions] = React.useState<GroupOption>(transToGroupOption(arrayDefaultOptions, groupBy));
@@ -261,32 +243,7 @@ const MultipleSelector = ({
   }, [arrayDefaultOptions, arrayOptions, groupBy, onSearch, options]);
 
   useEffect(() => {
-    /** sync search */
-
-    const doSearchSync = () => {
-      const res = onSearchSync?.(debouncedSearchTerm);
-      setOptions(transToGroupOption(res || [], groupBy));
-    };
-
-    const exec = async () => {
-      if (!onSearchSync || !open) return;
-
-      if (triggerSearchOnFocus) {
-        doSearchSync();
-      }
-
-      if (debouncedSearchTerm) {
-        doSearchSync();
-      }
-    };
-
-    void exec();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearchTerm, groupBy, open, triggerSearchOnFocus]);
-
-  useEffect(() => {
     /** async search */
-
     const doSearch = async () => {
       setIsLoading(true);
       const res = await onSearch?.(debouncedSearchTerm);
@@ -312,10 +269,7 @@ const MultipleSelector = ({
 
   const CreatableItem = () => {
     if (!creatable) return undefined;
-    if (
-      isOptionsExist(options, [{ value: inputValue, label: inputValue }]) ||
-      selected.find((s) => s.value === inputValue)
-    ) {
+    if (selected.find((s) => s.value === inputValue)) {
       return undefined;
     }
 
@@ -370,23 +324,6 @@ const MultipleSelector = ({
     return <CommandEmpty>{emptyIndicator}</CommandEmpty>;
   }, [creatable, emptyIndicator, onSearch, options]);
 
-  const selectables = React.useMemo<GroupOption>(() => removePickedOption(options, selected), [options, selected]);
-
-  /** Avoid Creatable Selector freezing or lagging when paste a long string. */
-  const commandFilter = React.useCallback(() => {
-    if (commandProps?.filter) {
-      return commandProps.filter;
-    }
-
-    if (creatable) {
-      return (value: string, search: string) => {
-        return value.toLowerCase().includes(search.toLowerCase()) ? 1 : -1;
-      };
-    }
-    // Using default filter in `cmdk`. We don&lsquo;t have to provide it.
-    return undefined;
-  }, [creatable, commandProps?.filter]);
-
   return (
     <Command
       ref={dropdownRef}
@@ -396,8 +333,7 @@ const MultipleSelector = ({
         commandProps?.onKeyDown?.(e);
       }}
       className={cn("h-auto overflow-visible bg-transparent", commandProps?.className)}
-      shouldFilter={commandProps?.shouldFilter !== undefined ? commandProps.shouldFilter : !onSearch} // When onSearch is provided, we don&lsquo;t want to filter the options. You can still override it.
-      filter={commandFilter()}
+      shouldFilter={false}
     >
       <div
         className={cn(
@@ -521,6 +457,7 @@ const MultipleSelector = ({
               onMouseUp={() => {
                 inputRef?.current?.focus();
               }}
+              onScrollEnd={onFetchMore && !isLoadingMore ? onFetchMore : undefined}
             >
               {isLoading ? (
                 <>{loadingIndicator}</>
@@ -529,7 +466,7 @@ const MultipleSelector = ({
                   {EmptyItem()}
                   {CreatableItem()}
                   {!selectFirstItem && <CommandItem value="-" className="hidden" />}
-                  {Object.entries(selectables).map(([key, dropdowns]) => (
+                  {Object.entries(options).map(([key, dropdowns]) => (
                     <CommandGroup key={key} heading={key} className="h-full overflow-auto">
                       <>
                         {dropdowns.map((option) => {
@@ -561,6 +498,11 @@ const MultipleSelector = ({
                             </CommandItem>
                           );
                         })}
+                        {isLoadingMore && key === "" && (
+                          <div className="flex items-center justify-center py-2">
+                            {loadingIndicator || <div className="text-muted-foreground text-sm">Loading more...</div>}
+                          </div>
+                        )}
                       </>
                     </CommandGroup>
                   ))}
@@ -574,5 +516,5 @@ const MultipleSelector = ({
   );
 };
 
-MultipleSelector.displayName = "MultipleSelector";
-export default MultipleSelector;
+MultiSelect.displayName = "MultiSelect";
+export { MultiSelect };
