@@ -1,5 +1,6 @@
 "use client";
 
+import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { useDataTable } from "@/hooks/use-data-table";
 import { trpc } from "@/lib/trpc/client";
 import { DataTable } from "../../data-table/data-table";
@@ -20,11 +21,15 @@ export function ProductCategoryTable({ productId }: ProductCategoriesTableProps)
 
   return (
     <div className="mt-1 space-y-3">
-      <div className="flex justify-end">
-        <AddProductCategory productId={productId} />
-      </div>
+      <div className="flex justify-end"></div>
       {!query.isPending || query.isPlaceholderData ? (
-        <DataTable table={table} pageSizeOptions={[3, 5, 10]} />
+        <>
+          <DataTable table={table} showPagination={false} />
+          <div className="flex items-center">
+            <AddProductCategory productId={productId} />
+            <DataTablePagination table={table} pageSizeOptions={[3, 5, 10]} />
+          </div>
+        </>
       ) : (
         <DataTableSkeleton
           columnCount={4}
