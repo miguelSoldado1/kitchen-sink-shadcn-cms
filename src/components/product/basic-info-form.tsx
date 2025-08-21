@@ -58,7 +58,7 @@ export function BasicInfoForm({ form, onSubmit, disabled }: BasicInfoFormProps) 
                 <Input
                   type="number"
                   step="0.01"
-                  className="peer ps-6 pe-12"
+                  className="peer ps-6"
                   min="0"
                   {...field}
                   value={field.value}
