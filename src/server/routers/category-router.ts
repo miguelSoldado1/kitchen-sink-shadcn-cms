@@ -1,7 +1,7 @@
 import { db } from "@/lib/database/drizzle";
 import * as schema from "@/lib/database/schema";
 import { TRPCError } from "@trpc/server";
-import { count, eq, ilike, sql } from "drizzle-orm";
+import { count, eq, sql } from "drizzle-orm";
 import z from "zod";
 import { buildQueryParams, getTableDataInput } from "../table-query";
 import { readProcedure, router, writeProcedure } from "../trpc";
@@ -59,21 +59,16 @@ async function getCategoryHandler(input: z.infer<typeof getCategorySchema>) {
   return category;
 }
 
-const getCursorCategorySchema = z.object({
-  cursor: z.number().min(0).default(0),
-  name: z.string().optional(),
-  limit: z.number().min(1).default(10),
-});
+async function getSelectCategoriesHandler() {
+  const categories = await db
+    .select({
+      value: sql<string>`cast(${schema.category.id} as text)`,
+      label: schema.category.name,
+    })
+    .from(schema.category)
+    .orderBy(schema.category.name);
 
-async function getCursorCategoryHandler({ cursor, name, limit }: z.infer<typeof getCursorCategorySchema>) {
-  const baseQuery = db
-    .select({ value: sql<string>`cast(${schema.category.id} as text)`, label: schema.category.name })
-    .from(schema.category);
-
-  const filteredQuery = name ? baseQuery.where(ilike(schema.category.name, `%${name}%`)) : baseQuery;
-  const data = await filteredQuery.limit(limit).offset(cursor * limit);
-
-  return { data, nextCursor: data.length > 0 ? cursor + 1 : null };
+  return categories;
 }
 
 const deleteCategorySchema = z.object({ id: z.number().positive() });
@@ -100,7 +95,7 @@ async function deleteCategoryHandler(input: z.infer<typeof deleteCategorySchema>
 
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
-      message: "Failed to delete product",
+      message: "Failed to update category",
       cause: error,
     });
   }
@@ -162,7 +157,7 @@ async function updateCategoryHandler(input: z.infer<typeof updateCategorySchema>
 export const categoryRouter = router({
   getTableCategories: readProcedure.input(getTableDataInput).query(({ input }) => getTableCategoriesHandler(input)),
   getCategory: readProcedure.input(getCategorySchema).query(({ input }) => getCategoryHandler(input)),
-  getCursorCategory: readProcedure.input(getCursorCategorySchema).query(({ input }) => getCursorCategoryHandler(input)),
+  getSelectCategories: readProcedure.query(() => getSelectCategoriesHandler()),
   deleteCategory: writeProcedure.input(deleteCategorySchema).mutation(({ input }) => deleteCategoryHandler(input)),
   createCategory: writeProcedure.input(createCategorySchema).mutation(({ input }) => createCategoryHandler(input)),
   updateCategory: writeProcedure.input(updateCategorySchema).mutation(({ input }) => updateCategoryHandler(input)),

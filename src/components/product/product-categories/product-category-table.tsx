@@ -30,7 +30,10 @@ export function ProductCategoryTable({ productId }: ProductCategoriesTableProps)
         <>
           <DataTable table={table} showPagination={false} />
           <div className="flex items-center">
-            <AddProductCategory productId={productId} />
+            <AddProductCategory
+              productId={productId}
+              existingCategories={query.data?.map((row) => row.categoryId) ?? []}
+            />
             <DataTablePagination table={table} pageSizeOptions={[3, 5, 10]} />
           </div>
         </>

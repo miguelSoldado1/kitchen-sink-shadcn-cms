@@ -11,6 +11,7 @@ async function getAllProductCategoriesHandler(input: z.infer<typeof getAllProduc
   const categories = await db
     .select({
       id: schema.productCategory.id,
+      categoryId: schema.category.id,
       name: schema.category.name,
       createdAt: schema.productCategory.createdAt,
       updatedAt: schema.productCategory.updatedAt,
@@ -23,8 +24,8 @@ async function getAllProductCategoriesHandler(input: z.infer<typeof getAllProduc
 }
 
 const createProductCategoryInput = z.object({
-  productId: z.number(),
-  categories: z.array(z.coerce.number()).min(1),
+  productId: z.coerce.number(),
+  categoryId: z.coerce.number(),
 });
 
 async function createProductCategoryHandler(input: z.infer<typeof createProductCategoryInput>) {
@@ -41,9 +42,7 @@ async function createProductCategoryHandler(input: z.infer<typeof createProductC
       });
     }
 
-    return db
-      .insert(schema.productCategory)
-      .values(input.categories.map((categoryId) => ({ productId: input.productId, categoryId })));
+    return db.insert(schema.productCategory).values({ productId: input.productId, categoryId: input.categoryId });
   } catch (error) {
     if (error instanceof TRPCError) {
       throw error;

@@ -14,9 +14,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Form, FormField } from "@/components/ui/form";
-import { FormItemWrapper } from "@/components/ui/form-item-wrapper";
-import { MultiSelect } from "@/components/ui/multiselect";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon } from "lucide-react";
@@ -24,33 +23,28 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 const productCategoryFormSchema = z.object({
-  categories: z.array(z.object({ value: z.string(), label: z.string() })).min(1),
+  category: z.string(),
 });
 
 interface AddProductCategoryProps {
   productId: number;
+  existingCategories: number[];
 }
 
-export function AddProductCategory({ productId }: AddProductCategoryProps) {
-  const [searchTerm, setSearchTerm] = useState("");
+export function AddProductCategory({ productId, existingCategories }: AddProductCategoryProps) {
   const [open, setOpen] = useState(false);
   const utils = trpc.useUtils();
   const form = useForm<z.infer<typeof productCategoryFormSchema>>({
     resolver: zodResolver(productCategoryFormSchema),
-    defaultValues: { categories: [] },
+    defaultValues: { category: "" },
   });
 
-  const query = trpc.category.getCursorCategory.useInfiniteQuery(
-    { limit: 10, name: searchTerm },
-    { getNextPageParam: (lastPage) => lastPage.nextCursor },
-  );
+  const query = trpc.category.getSelectCategories.useQuery();
 
   const mutation = trpc.productCategory.createProductCategory.useMutation();
 
   async function onSubmit(data: z.infer<typeof productCategoryFormSchema>) {
-    const categories = data.categories.map((category) => Number(category.value));
-
-    const { error } = await tryCatch(mutation.mutateAsync({ productId, categories }));
+    const { error } = await tryCatch(mutation.mutateAsync({ productId, categoryId: Number(data.category) }));
     if (error) {
       return toast.error("Failed to add product category", { description: error.message });
     }
@@ -60,10 +54,6 @@ export function AddProductCategory({ productId }: AddProductCategoryProps) {
     form.reset();
     setOpen(false);
   }
-
-  const options = React.useMemo(() => {
-    return query.data?.pages.flatMap((p) => p.data) ?? [];
-  }, [query.data]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -79,25 +69,33 @@ export function AddProductCategory({ productId }: AddProductCategoryProps) {
           <DialogDescription>Add a new product category</DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form id="add-category-form" onSubmit={form.handleSubmit(onSubmit)}>
+          <form id="add-category-form" className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
               control={form.control}
-              name="categories"
+              name="category"
               render={({ field }) => (
-                <FormItemWrapper label="Categories">
-                  <MultiSelect
-                    delay={300}
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Select categories"
-                    onFetchMore={query.fetchNextPage}
-                    hidePlaceholderWhenSelected={true}
-                    options={options}
-                    inputProps={{ onValueChange: (value: string) => setSearchTerm(value) }}
-                    emptyIndicator={<p className="text-center text-sm">No results found</p>}
-                    loadingIndicator={<p className="text-center text-sm">Loading...</p>}
-                  />
-                </FormItemWrapper>
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {query.data?.map((option) => (
+                        <SelectItem
+                          key={option.value}
+                          value={option.value.toString()}
+                          disabled={existingCategories.includes(Number(option.value))}
+                        >
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
               )}
             />
           </form>
