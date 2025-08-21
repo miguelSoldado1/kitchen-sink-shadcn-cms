@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { decimal, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { decimal, integer, pgTable, serial, text, timestamp, unique } from "drizzle-orm/pg-core";
 
 export * from "../auth/auth-schema";
 
@@ -20,17 +20,21 @@ export const category = pgTable("category", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const productCategory = pgTable("product_category", {
-  id: serial("id").primaryKey(),
-  productId: serial("product_id")
-    .references(() => product.id, { onDelete: "cascade" })
-    .notNull(),
-  categoryId: serial("category_id")
-    .references(() => category.id, { onDelete: "cascade" })
-    .notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+export const productCategory = pgTable(
+  "product_category",
+  {
+    id: serial("id").primaryKey(),
+    productId: integer("product_id")
+      .references(() => product.id, { onDelete: "cascade" })
+      .notNull(),
+    categoryId: integer("category_id")
+      .references(() => category.id, { onDelete: "cascade" })
+      .notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (t) => [unique().on(t.productId, t.categoryId)],
+);
 
 export const productCategoryRelations = relations(productCategory, ({ one }) => ({
   product: one(product, { fields: [productCategory.productId], references: [product.id] }),

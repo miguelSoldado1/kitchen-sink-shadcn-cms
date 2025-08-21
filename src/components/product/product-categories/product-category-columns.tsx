@@ -1,12 +1,10 @@
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
-import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { formatDate } from "@/lib/format";
-import { TrashIcon } from "lucide-react";
-import type { trpc } from "@/lib/trpc/client";
+import { DeleteProductCategory } from "./delete-product-category";
+import type { productCategory } from "@/lib/database/schema";
 import type { ColumnDef } from "@tanstack/react-table";
 
-export const columns: ColumnDef<ReturnType<typeof trpc.productCategory.getTableProductCategories.useQuery>>[] = [
+export const columns: ColumnDef<typeof productCategory.$inferSelect>[] = [
   {
     id: "id",
     accessorKey: "id",
@@ -35,16 +33,7 @@ export const columns: ColumnDef<ReturnType<typeof trpc.productCategory.getTableP
   },
   {
     id: "actions",
-    cell: () => (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button size="icon" variant="ghost" className="text-destructive focus:text-destructive size-4 cursor-pointer">
-            <TrashIcon />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Delete</TooltipContent>
-      </Tooltip>
-    ),
+    cell: ({ row }) => <DeleteProductCategory id={row.original.id} />,
     size: 20,
   },
 ];

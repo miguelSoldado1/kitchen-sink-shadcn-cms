@@ -31,7 +31,6 @@ const getTableProductCategoryInput = getTableDataInput.extend({ productId: z.num
 
 async function getTableProductCategoryHandler(input: z.infer<typeof getTableProductCategoryInput>) {
   const queryParams = buildQueryParams(input, CONFIG);
-  console.log("queryParams", queryParams);
 
   const combinedWhereClause = queryParams.whereClause
     ? and(eq(schema.productCategory.productId, input.productId), queryParams.whereClause)
@@ -62,21 +61,63 @@ const createProductCategoryInput = z.object({
 });
 
 async function createProductCategoryHandler(input: z.infer<typeof createProductCategoryInput>) {
-  const [existingProduct] = await db
-    .select({ id: schema.product.id })
-    .from(schema.product)
-    .where(eq(schema.product.id, input.productId));
+  try {
+    const [existingProduct] = await db
+      .select({ id: schema.product.id })
+      .from(schema.product)
+      .where(eq(schema.product.id, input.productId));
 
-  if (!existingProduct) {
+    if (!existingProduct) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `Product with id ${input.productId} not found`,
+      });
+    }
+
+    return db
+      .insert(schema.productCategory)
+      .values(input.categories.map((categoryId) => ({ productId: input.productId, categoryId })));
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
     throw new TRPCError({
-      code: "NOT_FOUND",
-      message: `Product with id ${input.productId} not found`,
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to create product category",
+      cause: error,
     });
   }
+}
 
-  return db
-    .insert(schema.productCategory)
-    .values(input.categories.map((categoryId) => ({ productId: input.productId, categoryId })));
+const deleteProductCategorySchema = z.object({ id: z.number().positive() });
+
+async function deleteProductCategoryHandler(input: z.infer<typeof deleteProductCategorySchema>) {
+  try {
+    const [existingProductCategory] = await db
+      .select({ id: schema.productCategory.id })
+      .from(schema.productCategory)
+      .where(eq(schema.productCategory.id, input.id));
+
+    if (!existingProductCategory) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `Product category with id ${input.id} not found`,
+      });
+    }
+
+    await db.delete(schema.productCategory).where(eq(schema.productCategory.id, input.id));
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to delete product category",
+      cause: error,
+    });
+  }
 }
 
 export const productCategoryRouter = router({
@@ -86,4 +127,7 @@ export const productCategoryRouter = router({
   createProductCategory: writeProcedure
     .input(createProductCategoryInput)
     .mutation(({ input }) => createProductCategoryHandler(input)),
+  deleteProductCategory: writeProcedure
+    .input(deleteProductCategorySchema)
+    .mutation(({ input }) => deleteProductCategoryHandler(input)),
 });
