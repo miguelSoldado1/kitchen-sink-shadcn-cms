@@ -15,8 +15,8 @@ async function getAllProductCategoriesHandler(input: z.infer<typeof getAllProduc
       createdAt: schema.productCategory.createdAt,
       updatedAt: schema.productCategory.updatedAt,
     })
-    .from(schema.category)
-    .innerJoin(schema.productCategory, eq(schema.category.id, schema.productCategory.categoryId))
+    .from(schema.productCategory)
+    .innerJoin(schema.category, eq(schema.category.id, schema.productCategory.categoryId))
     .where(eq(schema.productCategory.productId, input.productId));
 
   return categories;
