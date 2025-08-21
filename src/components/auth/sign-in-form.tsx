@@ -2,11 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { PasswordInput } from "@/components/password-input";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { Form, FormField } from "@/components/ui/form";
+import { FormItemWrapper } from "@/components/ui/form-item-wrapper";
 import { Input } from "@/components/ui/input";
-import { signIn } from "@/lib/auth/auth-client";
+import { PasswordInput } from "@/components/ui/password-input";
+import { authClient } from "@/lib/auth/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { GalleryVerticalEndIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -25,13 +26,13 @@ export function SignInForm() {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    const { error } = await signIn.email({ email: data.email, password: data.password });
+    const { error } = await authClient.signIn.email({ email: data.email, password: data.password });
 
     if (error) {
       return toast.error(error.message || "An error occurred while signing in.");
     }
 
-    router.push("/");
+    router.push("/product");
   }
 
   return (
@@ -57,24 +58,18 @@ export function SignInForm() {
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input {...field} type="email" placeholder="email@acme.com" />
-                </FormControl>
-              </FormItem>
+              <FormItemWrapper label="Email">
+                <Input {...field} type="email" placeholder="email@acme.com" />
+              </FormItemWrapper>
             )}
           />
           <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <PasswordInput {...field} placeholder="***********" />
-                </FormControl>
-              </FormItem>
+              <FormItemWrapper label="Password">
+                <PasswordInput {...field} placeholder="***********" />
+              </FormItemWrapper>
             )}
           />
           <Button className="cursor-pointer" type="submit" disabled={form.formState.isSubmitting}>

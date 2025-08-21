@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Avatar } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
-import { signOut, useSession } from "@/lib/auth/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 import { ChevronsUpDown, GalleryVerticalEndIcon, LogOutIcon, Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Skeleton } from "./ui/skeleton";
@@ -23,11 +24,11 @@ import { Skeleton } from "./ui/skeleton";
 export function NavUser() {
   const router = useRouter();
   const { isMobile } = useSidebar();
-  const { data } = useSession();
+  const { data } = authClient.useSession();
   const { setTheme } = useTheme();
 
   async function handleSignOut() {
-    const { error } = await signOut();
+    const { error } = await authClient.signOut();
 
     if (error) {
       return toast.error(error.message || "An error occurred while signing out.");
@@ -76,7 +77,14 @@ export function NavUser() {
                   <GalleryVerticalEndIcon className="m-auto p-1" />
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{data?.user.name}</span>
+                  <div className="flex items-center justify-between">
+                    <span className="truncate font-medium">{data?.user.name}</span>
+                    {data?.user?.role && (
+                      <Badge variant="secondary" className="text-xs">
+                        {data.user.role}
+                      </Badge>
+                    )}
+                  </div>
                   <span className="truncate text-xs">{data?.user.email}</span>
                 </div>
               </div>

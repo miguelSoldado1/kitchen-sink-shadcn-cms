@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { Button } from "./button";
+import { Input } from "./input";
 import type { JSX } from "react";
 
 export function PasswordInput({ className, disabled, ref, ...props }: JSX.IntrinsicElements["input"]) {
