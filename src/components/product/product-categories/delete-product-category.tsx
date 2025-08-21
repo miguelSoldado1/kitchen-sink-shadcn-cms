@@ -23,7 +23,7 @@ export function DeleteProductCategory({ id }: DeleteProductCategoryProps) {
     }
 
     toast.success("Product category deleted successfully");
-    utils.productCategory.getTableProductCategories.invalidate();
+    utils.productCategory.getAllProductCategories.invalidate();
   }
 
   return (

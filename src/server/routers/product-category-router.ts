@@ -1,58 +1,25 @@
 import { db } from "@/lib/database/drizzle";
 import * as schema from "@/lib/database/schema";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import z from "zod";
-import { buildQueryParams, getTableDataInput } from "../table-query";
 import { readProcedure, router, writeProcedure } from "../trpc";
-import type { TableQueryConfig } from "../table-query";
 
-const SORT_COLUMNS = {
-  createdAt: schema.productCategory.createdAt,
-  updatedAt: schema.productCategory.updatedAt,
-} as const;
+const getAllProductCategoriesInput = z.object({ productId: z.number() });
 
-const FILTER_COLUMNS = {} as const;
+async function getAllProductCategoriesHandler(input: z.infer<typeof getAllProductCategoriesInput>) {
+  const categories = await db
+    .select({
+      id: schema.productCategory.id,
+      name: schema.category.name,
+      createdAt: schema.productCategory.createdAt,
+      updatedAt: schema.productCategory.updatedAt,
+    })
+    .from(schema.category)
+    .innerJoin(schema.productCategory, eq(schema.category.id, schema.productCategory.categoryId))
+    .where(eq(schema.productCategory.productId, input.productId));
 
-const CONFIG: TableQueryConfig<typeof SORT_COLUMNS, typeof FILTER_COLUMNS> = {
-  sortColumns: SORT_COLUMNS,
-  filterColumns: FILTER_COLUMNS,
-  dateColumns: new Set(["createdAt", "updatedAt"]),
-} as const;
-
-const productCategorySelect = {
-  id: schema.productCategory.id,
-  name: schema.category.name,
-  createdAt: schema.productCategory.createdAt,
-  updatedAt: schema.productCategory.updatedAt,
-};
-
-const getTableProductCategoryInput = getTableDataInput.extend({ productId: z.number() });
-
-async function getTableProductCategoryHandler(input: z.infer<typeof getTableProductCategoryInput>) {
-  const queryParams = buildQueryParams(input, CONFIG);
-
-  const combinedWhereClause = queryParams.whereClause
-    ? and(eq(schema.productCategory.productId, input.productId), queryParams.whereClause)
-    : eq(schema.productCategory.productId, input.productId);
-
-  const baseQuery = db
-    .select(productCategorySelect)
-    .from(schema.productCategory)
-    .innerJoin(schema.category, eq(schema.productCategory.categoryId, schema.category.id))
-    .where(combinedWhereClause);
-
-  const query = queryParams.orderBy.length ? baseQuery.orderBy(...queryParams.orderBy) : baseQuery;
-
-  const [data, totalCount] = await Promise.all([
-    query.limit(queryParams.limit).offset(queryParams.offset),
-    db.select({ count: count() }).from(schema.productCategory).where(combinedWhereClause),
-  ]);
-
-  return {
-    data,
-    pageCount: Math.ceil(totalCount[0].count / queryParams.limit),
-  };
+  return categories;
 }
 
 const createProductCategoryInput = z.object({
@@ -121,9 +88,9 @@ async function deleteProductCategoryHandler(input: z.infer<typeof deleteProductC
 }
 
 export const productCategoryRouter = router({
-  getTableProductCategories: readProcedure
-    .input(getTableProductCategoryInput)
-    .query(({ input }) => getTableProductCategoryHandler(input)),
+  getAllProductCategories: readProcedure
+    .input(getAllProductCategoriesInput)
+    .query(({ input }) => getAllProductCategoriesHandler(input)),
   createProductCategory: writeProcedure
     .input(createProductCategoryInput)
     .mutation(({ input }) => createProductCategoryHandler(input)),

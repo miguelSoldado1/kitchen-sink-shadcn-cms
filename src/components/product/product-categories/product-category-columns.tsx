@@ -1,10 +1,16 @@
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { formatDate } from "@/lib/format";
 import { DeleteProductCategory } from "./delete-product-category";
-import type { productCategory } from "@/lib/database/schema";
 import type { ColumnDef } from "@tanstack/react-table";
 
-export const columns: ColumnDef<typeof productCategory.$inferSelect>[] = [
+interface ProductCategoryTableRow {
+  id: number;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export const columns: ColumnDef<ProductCategoryTableRow>[] = [
   {
     id: "id",
     accessorKey: "id",

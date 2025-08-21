@@ -56,7 +56,7 @@ export function AddProductCategory({ productId }: AddProductCategoryProps) {
     }
 
     toast.success("Product category added successfully");
-    utils.productCategory.getTableProductCategories.invalidate({ productId });
+    utils.productCategory.getAllProductCategories.invalidate({ productId });
     form.reset();
     setOpen(false);
   }
