@@ -25,12 +25,7 @@ export function DeleteProductButton({ id }: DeleteProductButtonProps) {
 
   return (
     <>
-      <Button
-        variant="destructive"
-        className="cursor-pointer"
-        onClick={() => setShowDeleteDialog(true)}
-        disabled={mutation.isPending}
-      >
+      <Button variant="destructive" onClick={() => setShowDeleteDialog(true)} disabled={mutation.isPending}>
         <TrashIcon className="size-4" />
         Delete Product
       </Button>
