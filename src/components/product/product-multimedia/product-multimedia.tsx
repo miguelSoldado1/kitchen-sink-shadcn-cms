@@ -60,7 +60,7 @@ export function ProductMultimedia({ productId }: ProductMultimediaProps) {
         )}
       </div>
       <div className="flex justify-end">
-        <Button onClick={handleReorder} disabled={mutation.isPending}>
+        <Button onClick={handleReorder} disabled={mutation.isPending || query.isPending || items.length === 0}>
           Update Order
         </Button>
       </div>
