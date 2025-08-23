@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { ProductMultimedia } from "./product-multimedia/product-multimedia";
 import { RecordInfoForm } from "./record-info-form";
 import type z from "zod";
 
@@ -45,7 +46,7 @@ export function ProductEditForm({ id }: ProductEditFormProps) {
 
   return (
     <section className="container space-y-6 rounded-xl border p-6">
-      <Accordion type="multiple" className="w-full" defaultValue={["basic-info"]}>
+      <Accordion type="multiple" className="w-full" defaultValue={["basic-info", "product-multimedia"]}>
         <AccordionItem value="record-info" className="mb-4 rounded-lg border">
           <AccordionTrigger className="px-4 py-3">Record Information</AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
@@ -56,6 +57,12 @@ export function ProductEditForm({ id }: ProductEditFormProps) {
           <AccordionTrigger className="px-4 py-3">Basic Information</AccordionTrigger>
           <AccordionContent className="px-4 pb-4">
             <BasicInfoForm form={form} onSubmit={onSubmit} disabled={query.isPending} />
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="product-multimedia" className="mb-4 rounded-lg border">
+          <AccordionTrigger className="px-4 py-3">Product Multimedia</AccordionTrigger>
+          <AccordionContent className="px-4 pb-4">
+            <ProductMultimedia productId={id} />
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="product-categories" className="mb-4 rounded-lg border">
