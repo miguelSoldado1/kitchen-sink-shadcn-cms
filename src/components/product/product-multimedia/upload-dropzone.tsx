@@ -5,13 +5,13 @@ import { Loader2Icon, UploadIcon } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import type { UploadHookControl } from "better-upload/client";
 
-interface CustomUploadDropzoneProps {
+interface UploadDropzoneProps {
   control: UploadHookControl<true>;
   metadata?: Record<string, unknown>;
   accept?: string;
 }
 
-export function CustomUploadDropzone({ control: { upload, isPending }, metadata, accept }: CustomUploadDropzoneProps) {
+export function UploadDropzone({ control: { upload, isPending }, metadata, accept }: UploadDropzoneProps) {
   const id = useId();
 
   const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({
@@ -33,8 +33,9 @@ export function CustomUploadDropzone({ control: { upload, isPending }, metadata,
           {isPending ? <Loader2Icon className="size-6 animate-spin" /> : <UploadIcon className="size-6" />}
         </div>
 
-        <div className="mt-3 space-y-1 text-center">
-          <p className="text-sm font-semibold">Drag and drop files here</p>
+        <div className="mt-1 space-y-1 text-center">
+          <p className="text-xs font-semibold">Drag and drop files here</p>
+          <p className="text-muted-foreground max-w-64 text-xs">You can upload 4 images. Each up to 5MB.</p>
         </div>
         <input {...getInputProps()} type="file" multiple id={id} accept={accept} disabled={isPending} />
       </label>
@@ -44,7 +45,6 @@ export function CustomUploadDropzone({ control: { upload, isPending }, metadata,
             <div className="my-2">
               <UploadIcon className="size-6" />
             </div>
-
             <p className="mt-3 text-sm font-semibold">Drop files here</p>
           </div>
         </div>

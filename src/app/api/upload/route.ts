@@ -17,7 +17,7 @@ const router: Router = {
   client: client,
   bucketName: env.BACKBLAZE_BUCKET_NAME,
   routes: {
-    demo: route({
+    productMultimedia: route({
       fileTypes: ["image/*"],
       multipleFiles: true,
       maxFiles: 4,

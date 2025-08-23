@@ -72,7 +72,7 @@ export function SignInForm() {
               </FormItemWrapper>
             )}
           />
-          <Button className="cursor-pointer" type="submit" disabled={form.formState.isSubmitting}>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
             Login
           </Button>
         </form>

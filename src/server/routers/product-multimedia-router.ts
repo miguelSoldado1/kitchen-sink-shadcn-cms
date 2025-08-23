@@ -69,6 +69,26 @@ async function deleteProductMultimediaHandler(input: z.infer<typeof deleteProduc
   }
 }
 
+const reorderProductMultimediaInput = z.object({
+  productId: z.number(),
+  newOrderIds: z.array(z.number()),
+});
+
+async function reorderProductMultimediaHandler(input: z.infer<typeof reorderProductMultimediaInput>) {
+  if (input.newOrderIds.length === 0) return;
+
+  const caseStatements = input.newOrderIds.map((id, idx) => `WHEN id = ${id} THEN ${idx + 1}`).join(" ");
+  const idList = input.newOrderIds.join(",");
+  const updatedAt = new Date().toISOString();
+
+  await db.execute(
+    `UPDATE product_multimedia
+      SET "order" = CASE ${caseStatements} END,
+          "updated_at" = '${updatedAt}'
+      WHERE product_id = ${input.productId} AND id IN (${idList});`,
+  );
+}
+
 export const productMultimediaRouter = router({
   getProductMultimedia: readProcedure
     .input(getProductMultimediaInput)
@@ -79,4 +99,7 @@ export const productMultimediaRouter = router({
   deleteProductMultimedia: writeProcedure
     .input(deleteProductMultimediaInput)
     .mutation(({ input }) => deleteProductMultimediaHandler(input)),
+  reorderProductMultimedia: writeProcedure
+    .input(reorderProductMultimediaInput)
+    .mutation(({ input }) => reorderProductMultimediaHandler(input)),
 });

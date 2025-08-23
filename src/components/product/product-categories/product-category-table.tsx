@@ -24,7 +24,7 @@ export function ProductCategoryTable({ productId }: ProductCategoriesTableProps)
   });
 
   return (
-    <div className="mt-1 space-y-3">
+    <div className="space-y-3">
       <div className="flex justify-end"></div>
       {!query.isPending || query.isPlaceholderData ? (
         <>
