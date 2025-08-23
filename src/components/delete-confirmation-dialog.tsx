@@ -24,10 +24,10 @@ export function DeleteConfirmationDialog({ open, onOpenChange, onConfirm, disabl
           </DialogCore.DialogDescription>
         </DialogCore.DialogHeader>
         <DialogCore.DialogFooter>
-          <Button variant="outline" className="cursor-pointer" onClick={() => onOpenChange(false)} disabled={disabled}>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={disabled}>
             Cancel
           </Button>
-          <Button variant="destructive" className="cursor-pointer" onClick={handleConfirm} disabled={disabled}>
+          <Button variant="destructive" onClick={handleConfirm} disabled={disabled}>
             Delete
           </Button>
         </DialogCore.DialogFooter>
