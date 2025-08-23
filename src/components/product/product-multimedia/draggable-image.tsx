@@ -24,7 +24,7 @@ export function DraggableImage({ productImage, invalidate }: DraggableImageProps
   const mutation = trpc.productMultimedia.deleteProductMultimedia.useMutation();
   const deleteMultimedia = useDeleteEntity({
     mutateAsync: () => mutation.mutateAsync({ id: productImage.id }),
-    entityName: "productMultimedia",
+    entityName: "product multimedia",
     invalidate,
   });
 

@@ -22,7 +22,8 @@ export function ProductMultimedia({ productId }: ProductMultimediaProps) {
     setItems(query.data ?? []);
   }, [query.data]);
 
-  const mutation = trpc.productMultimedia.reorderProductMultimedia.useMutation();
+  const createMutation = trpc.productMultimedia.createProductMultimedia.useMutation();
+  const reorderMutation = trpc.productMultimedia.reorderProductMultimedia.useMutation();
 
   const { control } = useUploadFiles({
     route: "productMultimedia",
@@ -32,17 +33,22 @@ export function ProductMultimedia({ productId }: ProductMultimediaProps) {
     onUploadFail: () => {
       toast.error("Something went wrong", { description: "Some or all files failed to upload" });
     },
-    onUploadComplete: () => {
-      toast.success("Files uploaded successfully");
+    onUploadComplete: async (data) => {
+      const multimedia = data.files.map((file) => ({ objectKey: file.objectKey }));
+      const { error } = await tryCatch(createMutation.mutateAsync({ multimedia, productId }));
+      if (error) {
+        toast.error("Failed to upload files", { description: error.message });
+        return;
+      }
+
       query.refetch();
     },
   });
 
   async function handleReorder() {
     const newOrderIds = items.map((item) => item.id);
-    const { error } = await tryCatch(mutation.mutateAsync({ productId, newOrderIds }));
+    const { error } = await tryCatch(reorderMutation.mutateAsync({ productId, newOrderIds }));
     if (error) {
-      console.log(error);
       return toast.error("Failed to reorder items", { description: error.message });
     }
 
@@ -52,7 +58,7 @@ export function ProductMultimedia({ productId }: ProductMultimediaProps) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-7">
-        <UploadDropzone control={control} metadata={{ productId }} />
+        <UploadDropzone control={control} />
         {!query.isPending ? (
           <DragAndDropMedia items={items} setItems={setItems} invalidate={() => query.refetch()} />
         ) : (
@@ -60,7 +66,7 @@ export function ProductMultimedia({ productId }: ProductMultimediaProps) {
         )}
       </div>
       <div className="flex justify-end">
-        <Button onClick={handleReorder} disabled={mutation.isPending || query.isPending || items.length === 0}>
+        <Button onClick={handleReorder} disabled={reorderMutation.isPending || query.isPending || items.length === 0}>
           Update Order
         </Button>
       </div>
