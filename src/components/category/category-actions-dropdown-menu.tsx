@@ -1,7 +1,8 @@
 import { useState } from "react";
 import * as ActionsMenuCore from "@/components/actions-menu";
 import { useDeleteEntity } from "@/hooks/use-delete-entity";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DeleteConfirmationDialog } from "../delete-confirmation-dialog";
 import { EditCategoryDialog } from "./edit-category-dialog";
 
@@ -12,11 +13,13 @@ interface CategoryActionsDropdownMenuProps {
 export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuProps) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
-  const mutation = trpc.category.deleteCategory.useMutation();
-  const utils = trpc.useUtils();
+  const mutation = useMutation(trpc.category.deleteCategory.mutationOptions());
+
   const deleteCategory = useDeleteEntity({
-    invalidate: utils.category.getTableCategories.invalidate,
+    invalidate: () => queryClient.invalidateQueries(trpc.category.getTableCategories.queryFilter()),
     mutateAsync: () => mutation.mutateAsync({ id }),
     entityName: "category",
   });

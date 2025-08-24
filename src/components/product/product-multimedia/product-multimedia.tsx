@@ -5,25 +5,29 @@ import { toast } from "sonner";
 import { tryCatch } from "@/app/try-catch";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useUploadFiles } from "better-upload/client";
 import { DragAndDropMedia } from "./drag-and-drop-media";
 import { UploadDropzone } from "./upload-dropzone";
+import type { productMultimedia } from "@/lib/database/schema";
 
 interface ProductMultimediaProps {
   productId: number;
 }
 
 export function ProductMultimedia({ productId }: ProductMultimediaProps) {
-  const query = trpc.productMultimedia.getProductMultimedia.useQuery({ productId });
-  const [items, setItems] = useState(query.data ?? []);
+  const [items, setItems] = useState<(typeof productMultimedia.$inferSelect)[]>([]);
+  const trpc = useTRPC();
+
+  const query = useQuery(trpc.productMultimedia.getProductMultimedia.queryOptions({ productId }));
 
   useEffect(() => {
     setItems(query.data ?? []);
   }, [query.data]);
 
-  const createMutation = trpc.productMultimedia.createProductMultimedia.useMutation();
-  const reorderMutation = trpc.productMultimedia.reorderProductMultimedia.useMutation();
+  const createMutation = useMutation(trpc.productMultimedia.createProductMultimedia.mutationOptions());
+  const reorderMutation = useMutation(trpc.productMultimedia.reorderProductMultimedia.mutationOptions());
 
   const { control } = useUploadFiles({
     route: "productMultimedia",

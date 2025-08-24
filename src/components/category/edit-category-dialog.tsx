@@ -4,7 +4,8 @@ import { toast } from "sonner";
 import { tryCatch } from "@/app/try-catch";
 import * as DialogCore from "@/components/ui/dialog";
 import { useCategoryForm } from "@/hooks/use-category-form";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { Form, FormField } from "../ui/form";
 import { FormItemWrapper } from "../ui/form-item-wrapper";
@@ -18,10 +19,12 @@ interface EditCategoryDialogProps {
 }
 
 export function EditCategoryDialog({ open, onOpenChange, categoryId }: EditCategoryDialogProps) {
-  const mutation = trpc.category.updateCategory.useMutation();
-  const query = trpc.category.getCategory.useQuery({ id: categoryId });
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation(trpc.category.updateCategory.mutationOptions());
+  const query = useQuery(trpc.category.getCategory.queryOptions({ id: categoryId }));
   const form = useCategoryForm({ values: { name: query.data?.name ?? "" } });
-  const utils = trpc.useUtils();
 
   async function onSubmit(data: CategoryFormType) {
     const { error } = await tryCatch(mutation.mutateAsync({ id: categoryId, ...data }));
@@ -29,9 +32,9 @@ export function EditCategoryDialog({ open, onOpenChange, categoryId }: EditCateg
       return toast.error("Failed to update category", { description: error.message });
     }
 
-    toast.success("Category updated successfully");
-    utils.category.getTableCategories.invalidate();
     onOpenChange(false);
+    toast.success("Category updated successfully");
+    await queryClient.invalidateQueries(trpc.category.getTableCategories.queryFilter());
   }
 
   return (

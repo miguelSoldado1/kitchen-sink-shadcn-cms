@@ -16,8 +16,9 @@ import {
 } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -33,15 +34,15 @@ interface AddProductCategoryProps {
 
 export function AddProductCategory({ productId, existingCategories }: AddProductCategoryProps) {
   const [open, setOpen] = useState(false);
-  const utils = trpc.useUtils();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof productCategoryFormSchema>>({
     resolver: zodResolver(productCategoryFormSchema),
     defaultValues: { category: "" },
   });
 
-  const query = trpc.category.getSelectCategories.useQuery();
-
-  const mutation = trpc.productCategory.createProductCategory.useMutation();
+  const query = useQuery(trpc.category.getSelectCategories.queryOptions());
+  const mutation = useMutation(trpc.productCategory.createProductCategory.mutationOptions());
 
   async function onSubmit(data: z.infer<typeof productCategoryFormSchema>) {
     const { error } = await tryCatch(mutation.mutateAsync({ productId, categoryId: Number(data.category) }));
@@ -49,10 +50,10 @@ export function AddProductCategory({ productId, existingCategories }: AddProduct
       return toast.error("Failed to add product category", { description: error.message });
     }
 
-    toast.success("Product category added successfully");
-    utils.productCategory.getAllProductCategories.invalidate({ productId });
     form.reset();
     setOpen(false);
+    toast.success("Product category added successfully");
+    await queryClient.invalidateQueries(trpc.productCategory.getAllProductCategories.queryFilter());
   }
 
   return (

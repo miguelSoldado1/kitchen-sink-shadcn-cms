@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { tryCatch } from "@/app/try-catch";
@@ -7,8 +8,9 @@ import { BasicInfoForm, basicInfoSchema } from "@/components/product/basic-info-
 import { ProductCategoryTable } from "@/components/product/product-categories/product-category-table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { ProductMultimedia } from "./product-multimedia/product-multimedia";
 import { RecordInfoForm } from "./record-info-form";
@@ -20,8 +22,17 @@ interface ProductEditFormProps {
 
 export function ProductEditForm({ id }: ProductEditFormProps) {
   const router = useRouter();
-  const utils = trpc.useUtils();
-  const query = trpc.product.getProduct.useQuery({ id: id });
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
+
+  const query = useQuery(trpc.product.getProduct.queryOptions({ id }));
+
+  useEffect(() => {
+    if (query.isError) {
+      router.replace("/product/create");
+    }
+  }, [query.isError, router]);
+
   const form = useForm<z.infer<typeof basicInfoSchema>>({
     resolver: zodResolver(basicInfoSchema),
     values: {
@@ -32,16 +43,17 @@ export function ProductEditForm({ id }: ProductEditFormProps) {
     },
   });
 
-  const mutation = trpc.product.updateProduct.useMutation();
+  const mutation = useMutation(trpc.product.updateProduct.mutationOptions());
+
   async function onSubmit(input: z.infer<typeof basicInfoSchema>) {
     const { error } = await tryCatch(mutation.mutateAsync({ ...input, id }));
     if (error) {
       return toast.error("Failed to update product", { description: error.message });
     }
 
-    toast.success("Product updated successfully");
-    utils.product.getTableProducts.invalidate();
     router.push("/product");
+    toast.success("Product updated successfully");
+    await queryClient.invalidateQueries(trpc.product.getTableProducts.queryFilter());
   }
 
   return (
