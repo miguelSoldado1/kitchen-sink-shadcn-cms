@@ -56,7 +56,7 @@ export function DragAndDropMedia({ items, setItems, invalidate }: DragAndDropMed
       </SortableContext>
       <DragOverlay>
         {activeItem ? (
-          <div className="relative size-40 scale-105 overflow-hidden rounded-2xl opacity-95 shadow-lg">
+          <div className="relative size-full scale-105 overflow-hidden rounded-2xl opacity-95 shadow-lg">
             <div className="bg-secondary text-secondary-foreground absolute top-2 left-2 z-10 rounded-md px-2 py-1 text-xs font-semibold select-none">
               {activeItem.order}
             </div>

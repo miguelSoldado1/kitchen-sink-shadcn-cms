@@ -61,7 +61,7 @@ export function ProductMultimedia({ productId }: ProductMultimediaProps) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-7">
+      <div className="grid grid-cols-2 gap-2 md:grid-cols-7">
         <UploadDropzone control={control} />
         {!query.isPending ? (
           <DragAndDropMedia items={items} setItems={setItems} invalidate={() => query.refetch()} />

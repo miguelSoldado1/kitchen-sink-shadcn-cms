@@ -38,7 +38,7 @@ export function DraggableImage({ productImage, invalidate }: DraggableImageProps
 
   return (
     <div
-      className="relative h-[160px] w-[160px] cursor-pointer overflow-hidden rounded-2xl shadow-md select-none"
+      className="relative size-full cursor-pointer overflow-hidden rounded-2xl shadow-md select-none"
       {...attributes}
       {...listeners}
       ref={setNodeRef}
