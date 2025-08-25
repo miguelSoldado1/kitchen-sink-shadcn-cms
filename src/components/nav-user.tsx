@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Avatar } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth/auth-client";
-import { ChevronsUpDown, GalleryVerticalEndIcon, LogOutIcon, Monitor, Moon, Sun } from "lucide-react";
+import { ChevronsUpDown, LogOutIcon, Monitor, Moon, Sun, UserPenIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Skeleton } from "./ui/skeleton";
 
@@ -47,8 +47,8 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               disabled={!data?.user}
             >
-              <Avatar className="h-8 w-8 rounded-full border">
-                {data?.user ? <GalleryVerticalEndIcon className="m-auto p-1" /> : null}
+              <Avatar className="size-8 rounded-full border">
+                {data?.user ? <AvatarFallback>{data.user.name.charAt(0).toUpperCase()}</AvatarFallback> : null}
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 {data?.user ? (
@@ -74,16 +74,11 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-full border">
-                  <GalleryVerticalEndIcon className="m-auto p-1" />
+                  {data?.user ? <AvatarFallback>{data.user.name.charAt(0).toUpperCase()}</AvatarFallback> : null}
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <div className="flex items-center justify-between">
                     <span className="truncate font-medium">{data?.user.name}</span>
-                    {data?.user?.role && (
-                      <Badge variant="secondary" className="text-xs">
-                        {data.user.role}
-                      </Badge>
-                    )}
                   </div>
                   <span className="truncate text-xs">{data?.user.email}</span>
                 </div>
@@ -114,6 +109,12 @@ export function NavUser() {
             <DropdownMenuItem onClick={handleSignOut}>
               <LogOutIcon />
               Log out
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/profile">
+                <UserPenIcon />
+                Edit Profile
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
