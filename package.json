@@ -20,7 +20,6 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@hookform/resolvers": "^5.2.1",
     "@neondatabase/serverless": "^1.0.1",
-    "@radix-ui/react-progress": "^1.1.7",
     "@t3-oss/env-nextjs": "^0.13.8",
     "@tanstack/react-query": "^5.84.1",
     "@tanstack/react-table": "^8.21.3",
