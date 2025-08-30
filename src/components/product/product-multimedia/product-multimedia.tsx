@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc/client";
 import { useUploadFiles } from "better-upload/client";
+import { UploadWithCropper } from "../../upload-with-cropper";
 import { DragAndDropMedia } from "./drag-and-drop-media";
-import { UploadDropzone } from "./upload-dropzone";
 
 interface ProductMultimediaProps {
   productId: number;
@@ -58,7 +58,7 @@ export function ProductMultimedia({ productId }: ProductMultimediaProps) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-7">
-        <UploadDropzone control={control} />
+        <UploadWithCropper onUpload={(file) => control.upload([file])} />
         {!query.isPending ? (
           <DragAndDropMedia items={items} setItems={setItems} invalidate={() => query.refetch()} />
         ) : (
