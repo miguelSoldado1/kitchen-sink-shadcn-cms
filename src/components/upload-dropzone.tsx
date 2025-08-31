@@ -27,9 +27,9 @@ export function UploadDropzone({ isPending, accept, onFilesSelected }: UploadDro
         </div>
         <div className="mt-1 space-y-1 text-center">
           <p className="text-xs font-semibold">Drag and drop files here</p>
-          <p className="text-muted-foreground max-w-64 text-xs">You can upload 4 images. Each up to 5MB.</p>
+          <p className="text-muted-foreground max-w-64 text-xs">You can upload 1 image. Each up to 5MB.</p>
         </div>
-        <input {...getInputProps()} type="file" multiple accept={accept} disabled={isPending} />
+        <input {...getInputProps()} type="file" accept={accept} disabled={isPending} multiple={false} />
       </label>
       {isDragActive && (
         <div className="bg-background pointer-events-none absolute inset-0 rounded-lg">
