@@ -57,7 +57,7 @@ export function ProductMultimedia({ productId }: ProductMultimediaProps) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-7">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,max-content))] gap-4">
         <UploadWithCropper onUpload={(file) => control.upload([file])} />
         {!query.isPending ? (
           <DragAndDropMedia items={items} setItems={setItems} invalidate={() => query.refetch()} />
