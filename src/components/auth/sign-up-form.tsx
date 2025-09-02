@@ -28,6 +28,10 @@ export function SignUpForm() {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    if (data.password !== data.confirmPassword) {
+      form.setError("confirmPassword", { message: "Passwords do not match" });
+    }
+
     const { error } = await authClient.signUp.email({ ...data, callbackURL: "/" });
 
     if (error) {
