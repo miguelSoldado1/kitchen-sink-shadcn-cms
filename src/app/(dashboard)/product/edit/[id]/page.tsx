@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { PageHeader, PageLayout } from "@/components/page-layout";
 import { DeleteProductButton } from "@/components/product/delete-product-button";
 import { ProductEditForm } from "@/components/product/product-edit-form";
+import { PublishProductButton } from "@/components/product/publish-product-button";
 import { checkWritePermission } from "@/server/auth-permissions";
 import z from "zod";
 
@@ -26,6 +27,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
   return (
     <PageLayout>
       <PageHeader title={TITLE} description={DESCRIPTION} backHref="/product">
+        <PublishProductButton id={id.data} />
         <DeleteProductButton id={id.data} />
       </PageHeader>
       <Suspense>

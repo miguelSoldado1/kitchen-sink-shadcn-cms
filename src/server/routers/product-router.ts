@@ -157,10 +157,84 @@ async function updateProductHandler(input: z.infer<typeof updateProductInput>) {
   }
 }
 
+const publishProductSchema = z.object({
+  id: z.number().positive(),
+});
+
+async function publishProductHandler(input: z.infer<typeof publishProductSchema>) {
+  try {
+    const [existingProduct] = await db
+      .select({ id: schema.product.id })
+      .from(schema.product)
+      .where(eq(schema.product.id, input.id));
+
+    if (!existingProduct) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `Product with id ${input.id} not found`,
+      });
+    }
+
+    await db
+      .update(schema.product)
+      .set({ published: true, updatedAt: new Date() })
+      .where(eq(schema.product.id, input.id));
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to publish product",
+      cause: error,
+    });
+  }
+}
+
+const unpublishProductSchema = z.object({
+  id: z.number().positive(),
+});
+
+async function unpublishProductHandler(input: z.infer<typeof unpublishProductSchema>) {
+  try {
+    const [existingProduct] = await db
+      .select({ id: schema.product.id })
+      .from(schema.product)
+      .where(eq(schema.product.id, input.id));
+
+    if (!existingProduct) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: `Product with id ${input.id} not found`,
+      });
+    }
+
+    await db
+      .update(schema.product)
+      .set({ published: false, updatedAt: new Date() })
+      .where(eq(schema.product.id, input.id));
+  } catch (error) {
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to unpublish product",
+      cause: error,
+    });
+  }
+}
+
 export const productRouter = router({
   getTableProducts: readProcedure.input(getTableDataInput).query(({ input }) => getTableProductsHandler(input)),
   getProduct: readProcedure.input(getProductSchema).query(({ input }) => getProductHandler(input)),
   deleteProduct: writeProcedure.input(deleteProductSchema).mutation(({ input }) => deleteProductHandler(input)),
   createProduct: writeProcedure.input(createProductInput).mutation(({ input }) => createProductHandler(input)),
   updateProduct: writeProcedure.input(updateProductInput).mutation(({ input }) => updateProductHandler(input)),
+  publishProduct: writeProcedure.input(publishProductSchema).mutation(({ input }) => publishProductHandler(input)),
+  unpublishProduct: writeProcedure
+    .input(unpublishProductSchema)
+    .mutation(({ input }) => unpublishProductHandler(input)),
 });
