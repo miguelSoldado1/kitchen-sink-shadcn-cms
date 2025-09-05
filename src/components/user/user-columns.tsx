@@ -1,15 +1,22 @@
 import { formatDate } from "@/lib/format";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
-import { CategoryActionsDropdownMenu } from "./category-actions-dropdown-menu";
-import type { category } from "@/lib/database/schema";
+import { Badge } from "../ui/badge";
+import { UserActionsDropdownMenu } from "./user-actions-dropdown-menu";
+import type { user } from "@/lib/database/schema";
 import type { ColumnDef } from "@tanstack/react-table";
 
-export const columns: ColumnDef<typeof category.$inferSelect>[] = [
+export const columns: ColumnDef<typeof user.$inferSelect>[] = [
   {
     id: "id",
     accessorKey: "id",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Id" />,
+    meta: {
+      label: "Id",
+      variant: "text",
+      placeholder: "Search by id...",
+    },
     enableSorting: false,
+    enableColumnFilter: true,
   },
   {
     id: "name",
@@ -22,6 +29,23 @@ export const columns: ColumnDef<typeof category.$inferSelect>[] = [
     },
     enableSorting: false,
     enableColumnFilter: true,
+  },
+  {
+    id: "email",
+    accessorKey: "email",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+    meta: { label: "Email" },
+    enableSorting: false,
+    enableColumnFilter: false,
+  },
+  {
+    id: "role",
+    accessorKey: "role",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
+    cell: ({ getValue }) => <Badge variant="secondary">{getValue<string>()}</Badge>,
+    meta: { label: "Role" },
+    enableSorting: false,
+    enableColumnFilter: false,
   },
   {
     id: "createdAt",
@@ -50,7 +74,7 @@ export const columns: ColumnDef<typeof category.$inferSelect>[] = [
   {
     id: "actions",
     cell({ row }) {
-      return <CategoryActionsDropdownMenu id={row.original.id} />;
+      return <UserActionsDropdownMenu id={row.original.id} />;
     },
     size: 20,
   },

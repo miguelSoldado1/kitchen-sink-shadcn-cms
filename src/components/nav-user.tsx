@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -82,6 +83,11 @@ export function NavUser() {
                   </div>
                   <span className="truncate text-xs">{data?.user.email}</span>
                 </div>
+                {data?.user.role && (
+                  <Badge variant="secondary" className="ml-auto">
+                    {data.user.role}
+                  </Badge>
+                )}
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />

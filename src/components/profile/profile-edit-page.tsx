@@ -98,7 +98,6 @@ const updatePasswordFormSchema = z.object({
 
 function UpdatePasswordForm() {
   const form = useForm<z.infer<typeof updatePasswordFormSchema>>({
-    defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
     resolver: zodResolver(updatePasswordFormSchema),
   });
 
