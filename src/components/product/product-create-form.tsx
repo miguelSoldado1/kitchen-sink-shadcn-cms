@@ -17,6 +17,12 @@ export function ProductCreateForm() {
   const utils = trpc.useUtils();
   const form = useForm<z.infer<typeof basicInfoSchema>>({
     resolver: zodResolver(basicInfoSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      sku: "",
+      price: 0,
+    },
   });
 
   const mutation = trpc.product.createProduct.useMutation();

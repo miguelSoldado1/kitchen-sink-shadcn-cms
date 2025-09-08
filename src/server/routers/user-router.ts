@@ -15,13 +15,12 @@ const FILTER_COLUMNS = {
   id: schema.user.id,
   name: schema.user.name,
   createdAt: schema.user.createdAt,
-  updatedAt: schema.user.updatedAt,
 } as const;
 
 const CONFIG: TableQueryConfig<typeof SORT_COLUMNS, typeof FILTER_COLUMNS> = {
   sortColumns: SORT_COLUMNS,
   filterColumns: FILTER_COLUMNS,
-  dateColumns: new Set(["createdAt", "updatedAt"]),
+  dateColumns: new Set(["createdAt"]),
   textColumns: new Set(["name", "id"]),
 } as const;
 

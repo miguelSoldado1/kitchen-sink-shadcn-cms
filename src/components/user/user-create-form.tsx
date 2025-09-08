@@ -28,6 +28,10 @@ export function UserCreateForm() {
   const utils = trpc.useUtils();
   const form = useForm<z.infer<typeof createUserFormSchema>>({
     resolver: zodResolver(createUserFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+    },
   });
 
   async function onSubmit(data: z.infer<typeof createUserFormSchema>) {

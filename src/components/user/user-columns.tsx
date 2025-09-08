@@ -42,7 +42,7 @@ export const columns: ColumnDef<typeof user.$inferSelect>[] = [
     id: "role",
     accessorKey: "role",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
-    cell: ({ getValue }) => <Badge variant="secondary">{getValue<string>()}</Badge>,
+    cell: ({ getValue }) => <Badge>{getValue<string>()}</Badge>,
     meta: { label: "Role" },
     enableSorting: false,
     enableColumnFilter: false,
@@ -54,18 +54,6 @@ export const columns: ColumnDef<typeof user.$inferSelect>[] = [
     cell: ({ getValue }) => formatDate(getValue<Date>()),
     meta: {
       label: "Created date",
-      variant: "date",
-    },
-    enableSorting: true,
-    enableColumnFilter: true,
-  },
-  {
-    id: "updatedAt",
-    accessorKey: "updatedAt",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Updated Date" />,
-    cell: ({ getValue }) => formatDate(getValue<Date>()),
-    meta: {
-      label: "Updated date",
       variant: "date",
     },
     enableSorting: true,
