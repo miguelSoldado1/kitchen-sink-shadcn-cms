@@ -13,10 +13,10 @@ export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuP
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const mutation = trpc.category.deleteCategory.useMutation();
+  const mutation = trpc.category.delete.useMutation();
   const utils = trpc.useUtils();
   const deleteCategory = useDeleteEntity({
-    invalidate: utils.category.getTableCategories.invalidate,
+    invalidate: utils.category.getTable.invalidate,
     mutateAsync: () => mutation.mutateAsync({ id }),
     entityName: "category",
   });

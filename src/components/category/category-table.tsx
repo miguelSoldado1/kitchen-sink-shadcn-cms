@@ -11,7 +11,7 @@ import { columns } from "./category-columns";
 export function CategoryTable() {
   const { table, query } = useDataTable({
     queryFn: (props) => {
-      return trpc.category.getTableCategories.useQuery(props, { placeholderData: (previousData) => previousData });
+      return trpc.category.getTable.useQuery(props, { placeholderData: (previousData) => previousData });
     },
     initialState: { sorting: [{ id: "createdAt", desc: true }], columnPinning: { right: ["actions"] } },
     columns,

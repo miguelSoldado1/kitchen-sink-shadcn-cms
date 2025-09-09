@@ -18,8 +18,8 @@ interface EditCategoryDialogProps {
 }
 
 export function EditCategoryDialog({ open, onOpenChange, categoryId }: EditCategoryDialogProps) {
-  const mutation = trpc.category.updateCategory.useMutation();
-  const query = trpc.category.getCategory.useQuery({ id: categoryId });
+  const mutation = trpc.category.update.useMutation();
+  const query = trpc.category.getFirst.useQuery({ id: categoryId });
   const form = useCategoryForm({ values: { name: query.data?.name ?? "" } });
   const utils = trpc.useUtils();
 
@@ -30,7 +30,7 @@ export function EditCategoryDialog({ open, onOpenChange, categoryId }: EditCateg
     }
 
     toast.success("Category updated successfully");
-    utils.category.getTableCategories.invalidate();
+    utils.category.getTable.invalidate();
     onOpenChange(false);
   }
 
