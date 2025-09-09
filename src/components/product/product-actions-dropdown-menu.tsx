@@ -12,10 +12,10 @@ export function ProductActionsDropdownMenu({ id }: ProductActionsDropdownMenuPro
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const utils = trpc.useUtils();
-  const mutation = trpc.product.deleteProduct.useMutation();
+  const mutation = trpc.product.delete.useMutation();
   const deleteProduct = useDeleteEntity({
     mutateAsync: () => mutation.mutateAsync({ id }),
-    invalidate: utils.product.getTableProducts.invalidate,
+    invalidate: utils.product.getTable.invalidate,
     entityName: "product",
   });
 

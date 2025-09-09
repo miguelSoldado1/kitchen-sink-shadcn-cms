@@ -21,7 +21,7 @@ interface ProductEditFormProps {
 export function ProductEditForm({ id }: ProductEditFormProps) {
   const router = useRouter();
   const utils = trpc.useUtils();
-  const query = trpc.product.getProduct.useQuery({ id: id });
+  const query = trpc.product.getFirst.useQuery({ id: id });
   const form = useForm<z.infer<typeof basicInfoSchema>>({
     resolver: zodResolver(basicInfoSchema),
     values: {
@@ -32,7 +32,7 @@ export function ProductEditForm({ id }: ProductEditFormProps) {
     },
   });
 
-  const mutation = trpc.product.updateProduct.useMutation();
+  const mutation = trpc.product.update.useMutation();
   async function onSubmit(input: z.infer<typeof basicInfoSchema>) {
     const { error } = await tryCatch(mutation.mutateAsync({ ...input, id }));
     if (error) {
@@ -40,7 +40,7 @@ export function ProductEditForm({ id }: ProductEditFormProps) {
     }
 
     toast.success("Product updated successfully");
-    utils.product.getTableProducts.invalidate();
+    utils.product.getTable.invalidate();
     router.push("/product");
   }
 

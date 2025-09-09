@@ -29,7 +29,7 @@ const CONFIG: TableQueryConfig<typeof SORT_COLUMNS, typeof FILTER_COLUMNS> = {
   rangeColumns: new Set(["price"]),
 } as const;
 
-async function getTableProductsHandler(input: z.infer<typeof getTableDataInput>) {
+async function getTableHandler(input: z.infer<typeof getTableDataInput>) {
   // Build query parameters using the reusable utility
   const queryParams = buildQueryParams(input, CONFIG);
 
@@ -51,7 +51,7 @@ async function getTableProductsHandler(input: z.infer<typeof getTableDataInput>)
 
 const getProductSchema = z.object({ id: z.number().positive() });
 
-async function getProductHandler(input: z.infer<typeof getProductSchema>) {
+async function getFirstHandler(input: z.infer<typeof getProductSchema>) {
   const [product] = await db.select().from(schema.product).where(eq(schema.product.id, input.id));
   if (!product) {
     throw new TRPCError({
@@ -65,7 +65,7 @@ async function getProductHandler(input: z.infer<typeof getProductSchema>) {
 
 const deleteProductSchema = z.object({ id: z.number().positive() });
 
-async function deleteProductHandler(input: z.infer<typeof deleteProductSchema>) {
+async function deleteHandler(input: z.infer<typeof deleteProductSchema>) {
   try {
     // Check if product exists
     const [existingProduct] = await db
@@ -101,7 +101,7 @@ const createProductInput = z.object({
   price: z.number().min(0.01).multipleOf(0.01),
 });
 
-async function createProductHandler(input: z.infer<typeof createProductInput>) {
+async function createHandler(input: z.infer<typeof createProductInput>) {
   try {
     const [product] = await db
       .insert(schema.product)
@@ -126,7 +126,7 @@ const updateProductInput = z.object({
   price: z.number().min(0.01).multipleOf(0.01),
 });
 
-async function updateProductHandler(input: z.infer<typeof updateProductInput>) {
+async function updateHandler(input: z.infer<typeof updateProductInput>) {
   try {
     const [existingProduct] = await db
       .select({ id: schema.product.id })
@@ -161,7 +161,7 @@ const publishProductSchema = z.object({
   id: z.number().positive(),
 });
 
-async function publishProductHandler(input: z.infer<typeof publishProductSchema>) {
+async function publishHandler(input: z.infer<typeof publishProductSchema>) {
   try {
     const [existingProduct] = await db
       .select({ id: schema.product.id })
@@ -196,7 +196,7 @@ const unpublishProductSchema = z.object({
   id: z.number().positive(),
 });
 
-async function unpublishProductHandler(input: z.infer<typeof unpublishProductSchema>) {
+async function unpublishHandler(input: z.infer<typeof unpublishProductSchema>) {
   try {
     const [existingProduct] = await db
       .select({ id: schema.product.id })
@@ -228,13 +228,11 @@ async function unpublishProductHandler(input: z.infer<typeof unpublishProductSch
 }
 
 export const productRouter = router({
-  getTableProducts: readProcedure.input(getTableDataInput).query(({ input }) => getTableProductsHandler(input)),
-  getProduct: readProcedure.input(getProductSchema).query(({ input }) => getProductHandler(input)),
-  deleteProduct: writeProcedure.input(deleteProductSchema).mutation(({ input }) => deleteProductHandler(input)),
-  createProduct: writeProcedure.input(createProductInput).mutation(({ input }) => createProductHandler(input)),
-  updateProduct: writeProcedure.input(updateProductInput).mutation(({ input }) => updateProductHandler(input)),
-  publishProduct: writeProcedure.input(publishProductSchema).mutation(({ input }) => publishProductHandler(input)),
-  unpublishProduct: writeProcedure
-    .input(unpublishProductSchema)
-    .mutation(({ input }) => unpublishProductHandler(input)),
+  getTable: readProcedure.input(getTableDataInput).query(({ input }) => getTableHandler(input)),
+  getFirst: readProcedure.input(getProductSchema).query(({ input }) => getFirstHandler(input)),
+  delete: writeProcedure.input(deleteProductSchema).mutation(({ input }) => deleteHandler(input)),
+  create: writeProcedure.input(createProductInput).mutation(({ input }) => createHandler(input)),
+  update: writeProcedure.input(updateProductInput).mutation(({ input }) => updateHandler(input)),
+  publish: writeProcedure.input(publishProductSchema).mutation(({ input }) => publishHandler(input)),
+  unpublish: writeProcedure.input(unpublishProductSchema).mutation(({ input }) => unpublishHandler(input)),
 });

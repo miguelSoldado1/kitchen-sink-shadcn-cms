@@ -12,9 +12,9 @@ interface PublishProductButtonProps {
 }
 
 export function PublishProductButton({ id }: PublishProductButtonProps) {
-  const query = trpc.product.getProduct.useQuery({ id });
-  const publishMutation = trpc.product.publishProduct.useMutation();
-  const unpublishMutation = trpc.product.unpublishProduct.useMutation();
+  const query = trpc.product.getFirst.useQuery({ id });
+  const publishMutation = trpc.product.publish.useMutation();
+  const unpublishMutation = trpc.product.unpublish.useMutation();
 
   const isPublished = query.data?.published;
   const isLoading = query.isPending || publishMutation.isPending || unpublishMutation.isPending;

@@ -13,13 +13,13 @@ interface DeleteProductButtonProps {
 
 export function DeleteProductButton({ id }: DeleteProductButtonProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const query = trpc.product.getProduct.useQuery({ id: id });
+  const query = trpc.product.getFirst.useQuery({ id: id });
 
   const utils = trpc.useUtils();
-  const mutation = trpc.product.deleteProduct.useMutation();
+  const mutation = trpc.product.delete.useMutation();
   const deleteProduct = useDeleteEntity({
     mutateAsync: () => mutation.mutateAsync({ id }),
-    invalidate: utils.product.getTableProducts.invalidate,
+    invalidate: utils.product.getTable.invalidate,
     redirectHref: "/product",
     entityName: "product",
   });
