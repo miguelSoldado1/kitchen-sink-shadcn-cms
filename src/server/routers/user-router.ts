@@ -24,7 +24,7 @@ const CONFIG: TableQueryConfig<typeof SORT_COLUMNS, typeof FILTER_COLUMNS> = {
   textColumns: new Set(["name", "id"]),
 } as const;
 
-async function getTableUsersHandler(input: z.infer<typeof getTableDataInput>) {
+async function getTableHandler(input: z.infer<typeof getTableDataInput>) {
   // Build query parameters using the reusable utility
   const queryParams = buildQueryParams(input, CONFIG);
 
@@ -45,5 +45,5 @@ async function getTableUsersHandler(input: z.infer<typeof getTableDataInput>) {
 }
 
 export const userRouter = router({
-  getTableUsers: readProcedure.input(getTableDataInput).query(({ input }) => getTableUsersHandler(input)),
+  getTable: readProcedure.input(getTableDataInput).query(({ input }) => getTableHandler(input)),
 });

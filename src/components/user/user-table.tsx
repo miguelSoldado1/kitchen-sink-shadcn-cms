@@ -11,7 +11,7 @@ import { columns } from "./user-columns";
 export function UserTable() {
   const { table, query } = useDataTable({
     queryFn: (props) => {
-      return trpc.user.getTableUsers.useQuery(props, { placeholderData: (previousData) => previousData });
+      return trpc.user.getTable.useQuery(props, { placeholderData: (previousData) => previousData });
     },
     initialState: { sorting: [{ id: "createdAt", desc: true }], columnPinning: { right: ["actions"] } },
     columns,

@@ -41,7 +41,7 @@ export function UserCreateForm() {
     }
 
     toast.success("User created successfully");
-    utils.user.getTableUsers.invalidate();
+    utils.user.getTable.invalidate();
     setOpen(false);
     form.reset();
   }
