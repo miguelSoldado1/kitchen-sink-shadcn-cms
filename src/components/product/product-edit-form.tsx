@@ -25,7 +25,7 @@ export function ProductEditForm({ id }: ProductEditFormProps) {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
 
-  const query = useQuery(trpc.product.getProduct.queryOptions({ id }));
+  const query = useQuery(trpc.product.getFirst.queryOptions({ id }));
 
   useEffect(() => {
     if (query.isError) {
@@ -43,7 +43,7 @@ export function ProductEditForm({ id }: ProductEditFormProps) {
     },
   });
 
-  const mutation = useMutation(trpc.product.updateProduct.mutationOptions());
+  const mutation = useMutation(trpc.product.update.mutationOptions());
 
   async function onSubmit(input: z.infer<typeof basicInfoSchema>) {
     const { error } = await tryCatch(mutation.mutateAsync({ ...input, id }));
@@ -53,7 +53,7 @@ export function ProductEditForm({ id }: ProductEditFormProps) {
 
     router.push("/product");
     toast.success("Product updated successfully");
-    await queryClient.invalidateQueries(trpc.product.getTableProducts.queryFilter());
+    await queryClient.invalidateQueries(trpc.product.getTable.queryFilter());
   }
 
   return (

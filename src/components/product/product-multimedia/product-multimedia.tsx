@@ -10,7 +10,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useUploadFiles } from "better-upload/client";
 import { UploadWithCropper } from "../../upload-with-cropper";
 import { DragAndDropMedia } from "./drag-and-drop-media";
-import { UploadDropzone } from "./upload-dropzone";
 import type { productMultimedia } from "@/lib/database/schema";
 
 interface ProductMultimediaProps {
@@ -21,14 +20,14 @@ export function ProductMultimedia({ productId }: ProductMultimediaProps) {
   const [items, setItems] = useState<(typeof productMultimedia.$inferSelect)[]>([]);
   const trpc = useTRPC();
 
-  const query = useQuery(trpc.productMultimedia.getProductMultimedia.queryOptions({ productId }));
+  const query = useQuery(trpc.productMultimedia.getAllById.queryOptions({ productId }));
 
   useEffect(() => {
     setItems(query.data ?? []);
   }, [query.data]);
 
-  const createMutation = useMutation(trpc.productMultimedia.createProductMultimedia.mutationOptions());
-  const reorderMutation = useMutation(trpc.productMultimedia.reorderProductMultimedia.mutationOptions());
+  const createMutation = useMutation(trpc.productMultimedia.create.mutationOptions());
+  const reorderMutation = useMutation(trpc.productMultimedia.updateOrder.mutationOptions());
 
   const { control } = useUploadFiles({
     route: "productMultimedia",

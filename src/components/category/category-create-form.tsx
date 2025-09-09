@@ -14,7 +14,7 @@ import { Input } from "../ui/input";
 import type { CategoryFormType } from "@/hooks/use-category-form";
 
 export function CategoryCreateForm() {
-  const mutation = trpc.category.createCategory.useMutation();
+  const mutation = trpc.category.create.useMutation();
   const form = useCategoryForm({ defaultValues: { name: "" } });
   const [open, setOpen] = useState(false);
   const utils = trpc.useUtils();
@@ -26,7 +26,7 @@ export function CategoryCreateForm() {
     }
 
     toast.success("Category created successfully");
-    utils.category.getTableCategories.invalidate();
+    utils.category.getTable.invalidate();
     setOpen(false);
     form.reset();
   }

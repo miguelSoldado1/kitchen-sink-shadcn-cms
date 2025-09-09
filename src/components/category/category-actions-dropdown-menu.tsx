@@ -16,10 +16,10 @@ export function CategoryActionsDropdownMenu({ id }: CategoryActionsDropdownMenuP
   const queryClient = useQueryClient();
   const trpc = useTRPC();
 
-  const mutation = useMutation(trpc.category.deleteCategory.mutationOptions());
+  const mutation = useMutation(trpc.category.delete.mutationOptions());
 
   const deleteCategory = useDeleteEntity({
-    invalidate: () => queryClient.invalidateQueries(trpc.category.getTableCategories.queryFilter()),
+    invalidate: () => queryClient.invalidateQueries(trpc.category.getTable.queryFilter()),
     mutateAsync: () => mutation.mutateAsync({ id }),
     entityName: "category",
   });

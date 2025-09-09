@@ -22,8 +22,8 @@ export function EditCategoryDialog({ open, onOpenChange, categoryId }: EditCateg
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const mutation = useMutation(trpc.category.updateCategory.mutationOptions());
-  const query = useQuery(trpc.category.getCategory.queryOptions({ id: categoryId }));
+  const mutation = useMutation(trpc.category.update.mutationOptions());
+  const query = useQuery(trpc.category.getFirst.queryOptions({ id: categoryId }));
   const form = useCategoryForm({ values: { name: query.data?.name ?? "" } });
 
   async function onSubmit(data: CategoryFormType) {
@@ -34,7 +34,7 @@ export function EditCategoryDialog({ open, onOpenChange, categoryId }: EditCateg
 
     onOpenChange(false);
     toast.success("Category updated successfully");
-    await queryClient.invalidateQueries(trpc.category.getTableCategories.queryFilter());
+    await queryClient.invalidateQueries(trpc.category.getTable.queryFilter());
   }
 
   return (

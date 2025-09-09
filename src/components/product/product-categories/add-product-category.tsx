@@ -44,7 +44,7 @@ export function AddProductCategory({ productId, existingCategories }: AddProduct
   });
 
   const query = useQuery(trpc.category.getSelectCategories.queryOptions());
-  const mutation = useMutation(trpc.productCategory.createProductCategory.mutationOptions());
+  const mutation = useMutation(trpc.productCategory.create.mutationOptions());
 
   async function onSubmit(data: z.infer<typeof productCategoryFormSchema>) {
     const { error } = await tryCatch(mutation.mutateAsync({ productId, categoryId: Number(data.category) }));
@@ -55,7 +55,7 @@ export function AddProductCategory({ productId, existingCategories }: AddProduct
     form.reset();
     setOpen(false);
     toast.success("Product category added successfully");
-    await queryClient.invalidateQueries(trpc.productCategory.getAllProductCategories.queryFilter());
+    await queryClient.invalidateQueries(trpc.productCategory.getAll.queryFilter());
   }
 
   return (

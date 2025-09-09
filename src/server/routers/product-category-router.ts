@@ -7,7 +7,7 @@ import { readProcedure, router, writeProcedure } from "../trpc";
 
 const getAllProductCategoriesInput = z.object({ productId: z.number() });
 
-async function getAllProductCategoriesHandler(input: z.infer<typeof getAllProductCategoriesInput>) {
+async function getAllHandler(input: z.infer<typeof getAllProductCategoriesInput>) {
   const categories = await db
     .select({
       id: schema.productCategory.id,
@@ -28,7 +28,7 @@ const createProductCategoryInput = z.object({
   categoryId: z.coerce.number(),
 });
 
-async function createProductCategoryHandler(input: z.infer<typeof createProductCategoryInput>) {
+async function createHandler(input: z.infer<typeof createProductCategoryInput>) {
   try {
     const [existingProduct] = await db
       .select({ id: schema.product.id })
@@ -58,7 +58,7 @@ async function createProductCategoryHandler(input: z.infer<typeof createProductC
 
 const deleteProductCategorySchema = z.object({ id: z.number().positive() });
 
-async function deleteProductCategoryHandler(input: z.infer<typeof deleteProductCategorySchema>) {
+async function deleteHandler(input: z.infer<typeof deleteProductCategorySchema>) {
   try {
     const [existingProductCategory] = await db
       .select({ id: schema.productCategory.id })
@@ -87,13 +87,7 @@ async function deleteProductCategoryHandler(input: z.infer<typeof deleteProductC
 }
 
 export const productCategoryRouter = router({
-  getAllProductCategories: readProcedure
-    .input(getAllProductCategoriesInput)
-    .query(({ input }) => getAllProductCategoriesHandler(input)),
-  createProductCategory: writeProcedure
-    .input(createProductCategoryInput)
-    .mutation(({ input }) => createProductCategoryHandler(input)),
-  deleteProductCategory: writeProcedure
-    .input(deleteProductCategorySchema)
-    .mutation(({ input }) => deleteProductCategoryHandler(input)),
+  getAll: readProcedure.input(getAllProductCategoriesInput).query(({ input }) => getAllHandler(input)),
+  create: writeProcedure.input(createProductCategoryInput).mutation(({ input }) => createHandler(input)),
+  delete: writeProcedure.input(deleteProductCategorySchema).mutation(({ input }) => deleteHandler(input)),
 });

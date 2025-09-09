@@ -33,7 +33,7 @@ export function UserActionsDropdownMenu({ id }: UserActionsDropdownMenuProps) {
       }
 
       toast.success("User deleted successfully");
-      utils.user.getTableUsers.invalidate();
+      utils.user.getTable.invalidate();
       setShowDeleteDialog(false);
     });
   }
@@ -47,7 +47,7 @@ export function UserActionsDropdownMenu({ id }: UserActionsDropdownMenuProps) {
       }
 
       toast.success("User role updated successfully");
-      utils.user.getTableUsers.invalidate();
+      utils.user.getTable.invalidate();
     });
   }
 

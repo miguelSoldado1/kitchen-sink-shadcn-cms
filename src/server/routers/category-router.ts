@@ -25,7 +25,7 @@ const CONFIG: TableQueryConfig<typeof SORT_COLUMNS, typeof FILTER_COLUMNS> = {
   textColumns: new Set(["name"]),
 } as const;
 
-async function getTableCategoriesHandler(input: z.infer<typeof getTableDataInput>) {
+async function getTableHandler(input: z.infer<typeof getTableDataInput>) {
   // Build query parameters using the reusable utility
   const queryParams = buildQueryParams(input, CONFIG);
 
@@ -47,7 +47,7 @@ async function getTableCategoriesHandler(input: z.infer<typeof getTableDataInput
 
 const getCategorySchema = z.object({ id: z.number().positive() });
 
-async function getCategoryHandler(input: z.infer<typeof getCategorySchema>) {
+async function getFirstHandler(input: z.infer<typeof getCategorySchema>) {
   const [category] = await db.select().from(schema.category).where(eq(schema.category.id, input.id)).limit(1).execute();
   if (!category) {
     throw new TRPCError({
@@ -73,7 +73,7 @@ async function getSelectCategoriesHandler() {
 
 const deleteCategorySchema = z.object({ id: z.number().positive() });
 
-async function deleteCategoryHandler(input: z.infer<typeof deleteCategorySchema>) {
+async function deleteHandler(input: z.infer<typeof deleteCategorySchema>) {
   try {
     const [existingCategory] = await db
       .select({ id: schema.category.id })
@@ -105,7 +105,7 @@ const createCategorySchema = z.object({
   name: z.string().min(2).max(100),
 });
 
-async function createCategoryHandler(input: z.infer<typeof createCategorySchema>) {
+async function createHandler(input: z.infer<typeof createCategorySchema>) {
   try {
     const [category] = await db.insert(schema.category).values(input).returning({ id: schema.category.id });
     return category.id;
@@ -123,7 +123,7 @@ const updateCategorySchema = z.object({
   name: z.string().min(2).max(100),
 });
 
-async function updateCategoryHandler(input: z.infer<typeof updateCategorySchema>) {
+async function updateHandler(input: z.infer<typeof updateCategorySchema>) {
   try {
     const [existingCategory] = await db
       .select({ id: schema.category.id })
@@ -155,10 +155,10 @@ async function updateCategoryHandler(input: z.infer<typeof updateCategorySchema>
 }
 
 export const categoryRouter = router({
-  getTableCategories: readProcedure.input(getTableDataInput).query(({ input }) => getTableCategoriesHandler(input)),
-  getCategory: readProcedure.input(getCategorySchema).query(({ input }) => getCategoryHandler(input)),
+  getTable: readProcedure.input(getTableDataInput).query(({ input }) => getTableHandler(input)),
+  getFirst: readProcedure.input(getCategorySchema).query(({ input }) => getFirstHandler(input)),
+  delete: writeProcedure.input(deleteCategorySchema).mutation(({ input }) => deleteHandler(input)),
+  create: writeProcedure.input(createCategorySchema).mutation(({ input }) => createHandler(input)),
+  update: writeProcedure.input(updateCategorySchema).mutation(({ input }) => updateHandler(input)),
   getSelectCategories: readProcedure.query(() => getSelectCategoriesHandler()),
-  deleteCategory: writeProcedure.input(deleteCategorySchema).mutation(({ input }) => deleteCategoryHandler(input)),
-  createCategory: writeProcedure.input(createCategorySchema).mutation(({ input }) => createCategoryHandler(input)),
-  updateCategory: writeProcedure.input(updateCategorySchema).mutation(({ input }) => updateCategoryHandler(input)),
 });
