@@ -3,10 +3,11 @@
 import React from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { PackageOpenIcon, TagIcon } from "lucide-react";
+import { PackageOpenIcon, TagIcon, UsersRoundIcon } from "lucide-react";
 import Provider from "../../lib/trpc/provider";
+import type { NavigationItem } from "@/components/nav-main";
 
-const navigationData = [
+const navigationData: NavigationItem[] = [
   {
     title: "Products",
     url: "/product",
@@ -16,6 +17,12 @@ const navigationData = [
     title: "Categories",
     url: "/category",
     icon: TagIcon,
+  },
+  {
+    title: "Users",
+    url: "/user",
+    roleAccess: "admin",
+    icon: UsersRoundIcon,
   },
 ];
 

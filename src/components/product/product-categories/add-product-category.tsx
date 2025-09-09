@@ -38,7 +38,9 @@ export function AddProductCategory({ productId, existingCategories }: AddProduct
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof productCategoryFormSchema>>({
     resolver: zodResolver(productCategoryFormSchema),
-    defaultValues: { category: "" },
+    defaultValues: {
+      category: "",
+    },
   });
 
   const query = useQuery(trpc.category.getSelectCategories.queryOptions());

@@ -8,7 +8,7 @@ import type { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 export function ActionsMenuTriggerEllipsis() {
   return (
     <DropdownMenuCore.DropdownMenuTrigger asChild>
-      <Button aria-label="Open menu" variant="ghost" className="data-[state=open]:bg-muted flex size-8 p-0">
+      <Button aria-label="Open menu" variant="ghost" className="flex size-8 p-0">
         <EllipsisIcon className="size-4" aria-hidden="true" />
       </Button>
     </DropdownMenuCore.DropdownMenuTrigger>
@@ -41,7 +41,7 @@ export function ActionsMenuDeleteButton({ className, ...props }: React.Component
       className={clsx("text-destructive focus:text-destructive", className)}
       {...props}
     >
-      <TrashIcon className="size-4" />
+      <TrashIcon className="text-destructive size-4" />
       Delete
     </DropdownMenuCore.DropdownMenuItem>
   );

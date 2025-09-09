@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useTRPC } from "@/utils/trpc";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useUploadFiles } from "better-upload/client";
+import { UploadWithCropper } from "../../upload-with-cropper";
 import { DragAndDropMedia } from "./drag-and-drop-media";
 import { UploadDropzone } from "./upload-dropzone";
 import type { productMultimedia } from "@/lib/database/schema";
@@ -61,8 +62,8 @@ export function ProductMultimedia({ productId }: ProductMultimediaProps) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-2 md:grid-cols-7">
-        <UploadDropzone control={control} />
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(160px,max-content))] gap-4">
+        <UploadWithCropper onUpload={(file) => control.upload([file])} />
         {!query.isPending ? (
           <DragAndDropMedia items={items} setItems={setItems} invalidate={() => query.refetch()} />
         ) : (

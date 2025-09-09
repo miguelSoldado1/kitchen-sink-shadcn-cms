@@ -4,7 +4,7 @@ import * as DialogCore from "@/components/ui/dialog";
 interface DeleteConfirmationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: () => Promise<unknown>;
+  onConfirm: () => Promise<unknown> | void;
   disabled?: boolean;
 }
 

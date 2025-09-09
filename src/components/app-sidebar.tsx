@@ -13,18 +13,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { GalleryVerticalEndIcon } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-
-interface NavigationItem {
-  title: string;
-  url: string;
-  icon: LucideIcon;
-  items?: {
-    title: string;
-    url: string;
-    icon?: LucideIcon;
-  }[];
-}
+import type { NavigationItem } from "@/components/nav-main";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   navigationData?: NavigationItem[];

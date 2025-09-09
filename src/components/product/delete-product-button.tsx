@@ -13,6 +13,7 @@ interface DeleteProductButtonProps {
 
 export function DeleteProductButton({ id }: DeleteProductButtonProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const query = trpc.product.getProduct.useQuery({ id: id });
 
   const utils = trpc.useUtils();
   const mutation = trpc.product.deleteProduct.useMutation();
@@ -25,7 +26,11 @@ export function DeleteProductButton({ id }: DeleteProductButtonProps) {
 
   return (
     <>
-      <Button variant="destructive" onClick={() => setShowDeleteDialog(true)} disabled={mutation.isPending}>
+      <Button
+        variant="destructive"
+        onClick={() => setShowDeleteDialog(true)}
+        disabled={mutation.isPending || query.isPending}
+      >
         <TrashIcon className="size-4" />
         Delete Product
       </Button>

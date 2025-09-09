@@ -1,5 +1,7 @@
+import { headers } from "next/headers";
 import { env } from "@/env";
-import { createUploadRouteHandler, route } from "better-upload/server";
+import { auth } from "@/lib/auth/auth";
+import { createUploadRouteHandler, route, UploadFileError } from "better-upload/server";
 import { backblaze } from "better-upload/server/helpers";
 import type { Router } from "better-upload/server";
 
@@ -15,8 +17,13 @@ const router: Router = {
   routes: {
     productMultimedia: route({
       fileTypes: ["image/*"],
-      multipleFiles: true,
-      maxFiles: 4,
+      multipleFiles: false,
+      onBeforeUpload: async () => {
+        const session = await auth.api.getSession({ headers: await headers() });
+        if (!session?.user) {
+          throw new UploadFileError("Not logged in!");
+        }
+      },
     }),
   },
 };

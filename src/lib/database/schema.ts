@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { decimal, integer, pgTable, serial, text, timestamp, unique } from "drizzle-orm/pg-core";
+import { boolean, decimal, integer, pgTable, serial, text, timestamp, unique } from "drizzle-orm/pg-core";
 
 export * from "../auth/auth-schema";
 
@@ -9,6 +9,7 @@ export const product = pgTable("product", {
   description: text("description"),
   sku: text("sku").unique().notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  published: boolean("published").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

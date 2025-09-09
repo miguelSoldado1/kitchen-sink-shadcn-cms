@@ -1,15 +1,22 @@
 import { formatDate } from "@/lib/format";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
-import { CategoryActionsDropdownMenu } from "./category-actions-dropdown-menu";
-import type { category } from "@/lib/database/schema";
+import { Badge } from "../ui/badge";
+import { UserActionsDropdownMenu } from "./user-actions-dropdown-menu";
+import type { user } from "@/lib/database/schema";
 import type { ColumnDef } from "@tanstack/react-table";
 
-export const columns: ColumnDef<typeof category.$inferSelect>[] = [
+export const columns: ColumnDef<typeof user.$inferSelect>[] = [
   {
     id: "id",
     accessorKey: "id",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Id" />,
+    meta: {
+      label: "Id",
+      variant: "text",
+      placeholder: "Search by id...",
+    },
     enableSorting: false,
+    enableColumnFilter: true,
   },
   {
     id: "name",
@@ -24,6 +31,23 @@ export const columns: ColumnDef<typeof category.$inferSelect>[] = [
     enableColumnFilter: true,
   },
   {
+    id: "email",
+    accessorKey: "email",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+    meta: { label: "Email" },
+    enableSorting: false,
+    enableColumnFilter: false,
+  },
+  {
+    id: "role",
+    accessorKey: "role",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Role" />,
+    cell: ({ getValue }) => <Badge>{getValue<string>()}</Badge>,
+    meta: { label: "Role" },
+    enableSorting: false,
+    enableColumnFilter: false,
+  },
+  {
     id: "createdAt",
     accessorKey: "createdAt",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Created Date" />,
@@ -36,21 +60,9 @@ export const columns: ColumnDef<typeof category.$inferSelect>[] = [
     enableColumnFilter: true,
   },
   {
-    id: "updatedAt",
-    accessorKey: "updatedAt",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Updated Date" />,
-    cell: ({ getValue }) => formatDate(getValue<Date>()),
-    meta: {
-      label: "Updated date",
-      variant: "date",
-    },
-    enableSorting: true,
-    enableColumnFilter: true,
-  },
-  {
     id: "actions",
     cell({ row }) {
-      return <CategoryActionsDropdownMenu id={row.original.id} />;
+      return <UserActionsDropdownMenu id={row.original.id} />;
     },
     size: 20,
   },

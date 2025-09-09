@@ -28,6 +28,7 @@ export function CategoryCreateForm() {
     toast.success("Category created successfully");
     utils.category.getTableCategories.invalidate();
     setOpen(false);
+    form.reset();
   }
 
   return (
@@ -35,7 +36,7 @@ export function CategoryCreateForm() {
       <DialogCore.DialogTrigger asChild>
         <Button>
           <PlusIcon className="size-4" />
-          Add Category
+          Create Category
         </Button>
       </DialogCore.DialogTrigger>
       <DialogCore.DialogContent>

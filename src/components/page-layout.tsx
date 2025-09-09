@@ -20,7 +20,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, children, backHref }: PageHeaderProps) {
   return (
-    <section className="flex items-center justify-between space-y-2">
+    <section className="flex items-center justify-between py-2">
       <div className="flex items-center space-x-4">
         {backHref && (
           <Button variant="ghost" size="icon" asChild>
@@ -34,7 +34,7 @@ export function PageHeader({ title, description, children, backHref }: PageHeade
           {description && <p className="text-muted-foreground">{description}</p>}
         </div>
       </div>
-      {children && <div className="flex items-center">{children}</div>}
+      {children && <div className="flex items-center gap-2">{children}</div>}
     </section>
   );
 }
