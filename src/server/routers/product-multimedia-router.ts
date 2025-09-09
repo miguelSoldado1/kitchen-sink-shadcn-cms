@@ -7,7 +7,7 @@ import { readProcedure, router, writeProcedure } from "../trpc";
 
 const getProductMultimediaInput = z.object({ productId: z.number() });
 
-async function getProductMultimediaHandler(input: z.infer<typeof getProductMultimediaInput>) {
+async function getAllByIdHandler(input: z.infer<typeof getProductMultimediaInput>) {
   return db.query.productMultimedia.findMany({
     where: eq(schema.productMultimedia.productId, input.productId),
     orderBy: [asc(schema.productMultimedia.order)],
@@ -19,7 +19,7 @@ const createProductMultimediaInput = z.object({
   productId: z.number(),
 });
 
-async function createProductMultimediaHandler(input: z.infer<typeof createProductMultimediaInput>) {
+async function createHandler(input: z.infer<typeof createProductMultimediaInput>) {
   return db.transaction(async (tx) => {
     const lastImage = await tx.query.productMultimedia.findFirst({
       where: eq(schema.productMultimedia.productId, input.productId),
@@ -42,7 +42,7 @@ const deleteProductMultimediaInput = z.object({
   id: z.number(),
 });
 
-async function deleteProductMultimediaHandler(input: z.infer<typeof deleteProductMultimediaInput>) {
+async function deleteHandler(input: z.infer<typeof deleteProductMultimediaInput>) {
   try {
     const existingImage = await db.query.productMultimedia.findFirst({
       where: eq(schema.productMultimedia.id, input.id),
@@ -74,7 +74,7 @@ const reorderProductMultimediaInput = z.object({
   newOrderIds: z.array(z.number()),
 });
 
-async function reorderProductMultimediaHandler(input: z.infer<typeof reorderProductMultimediaInput>) {
+async function updateOrderHandler(input: z.infer<typeof reorderProductMultimediaInput>) {
   if (input.newOrderIds.length === 0) return;
 
   const caseStatements = input.newOrderIds.map((id, idx) => `WHEN id = ${id} THEN ${idx + 1}`).join(" ");
@@ -90,16 +90,8 @@ async function reorderProductMultimediaHandler(input: z.infer<typeof reorderProd
 }
 
 export const productMultimediaRouter = router({
-  getProductMultimedia: readProcedure
-    .input(getProductMultimediaInput)
-    .query(({ input }) => getProductMultimediaHandler(input)),
-  createProductMultimedia: writeProcedure
-    .input(createProductMultimediaInput)
-    .mutation(({ input }) => createProductMultimediaHandler(input)),
-  deleteProductMultimedia: writeProcedure
-    .input(deleteProductMultimediaInput)
-    .mutation(({ input }) => deleteProductMultimediaHandler(input)),
-  reorderProductMultimedia: writeProcedure
-    .input(reorderProductMultimediaInput)
-    .mutation(({ input }) => reorderProductMultimediaHandler(input)),
+  create: writeProcedure.input(createProductMultimediaInput).mutation(({ input }) => createHandler(input)),
+  delete: writeProcedure.input(deleteProductMultimediaInput).mutation(({ input }) => deleteHandler(input)),
+  getAllById: readProcedure.input(getProductMultimediaInput).query(({ input }) => getAllByIdHandler(input)),
+  updateOrder: writeProcedure.input(reorderProductMultimediaInput).mutation(({ input }) => updateOrderHandler(input)),
 });

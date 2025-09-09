@@ -21,7 +21,7 @@ export function DraggableImage({ productImage, invalidate }: DraggableImageProps
   const [open, setOpen] = useState(false);
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({ id: productImage.id });
 
-  const mutation = trpc.productMultimedia.deleteProductMultimedia.useMutation();
+  const mutation = trpc.productMultimedia.delete.useMutation();
   const deleteMultimedia = useDeleteEntity({
     mutateAsync: () => mutation.mutateAsync({ id: productImage.id }),
     entityName: "product multimedia",

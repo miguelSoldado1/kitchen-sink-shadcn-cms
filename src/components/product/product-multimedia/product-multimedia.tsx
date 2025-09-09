@@ -15,15 +15,15 @@ interface ProductMultimediaProps {
 }
 
 export function ProductMultimedia({ productId }: ProductMultimediaProps) {
-  const query = trpc.productMultimedia.getProductMultimedia.useQuery({ productId });
+  const query = trpc.productMultimedia.getAllById.useQuery({ productId });
   const [items, setItems] = useState(query.data ?? []);
 
   useEffect(() => {
     setItems(query.data ?? []);
   }, [query.data]);
 
-  const createMutation = trpc.productMultimedia.createProductMultimedia.useMutation();
-  const reorderMutation = trpc.productMultimedia.reorderProductMultimedia.useMutation();
+  const createMutation = trpc.productMultimedia.create.useMutation();
+  const reorderMutation = trpc.productMultimedia.updateOrder.useMutation();
 
   const { control } = useUploadFiles({
     route: "productMultimedia",
