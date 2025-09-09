@@ -13,7 +13,7 @@ interface ProductCategoriesTableProps {
 }
 
 export function ProductCategoryTable({ productId }: ProductCategoriesTableProps) {
-  const query = trpc.productCategory.getAllProductCategories.useQuery({ productId });
+  const query = trpc.productCategory.getAll.useQuery({ productId });
   const table = useReactTable({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),

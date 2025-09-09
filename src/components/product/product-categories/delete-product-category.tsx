@@ -13,7 +13,7 @@ interface DeleteProductCategoryProps {
 
 export function DeleteProductCategory({ id }: DeleteProductCategoryProps) {
   const [open, setOpen] = useState(false);
-  const mutation = trpc.productCategory.deleteProductCategory.useMutation();
+  const mutation = trpc.productCategory.delete.useMutation();
   const utils = trpc.useUtils();
 
   async function handleDelete() {
@@ -23,7 +23,7 @@ export function DeleteProductCategory({ id }: DeleteProductCategoryProps) {
     }
 
     toast.success("Product category deleted successfully");
-    utils.productCategory.getAllProductCategories.invalidate();
+    utils.productCategory.getAll.invalidate();
   }
 
   return (
