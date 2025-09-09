@@ -5,9 +5,10 @@ import Image from "next/image";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { Button } from "@/components/ui/button";
 import { useDeleteEntity } from "@/hooks/use-delete-entity";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useMutation } from "@tanstack/react-query";
 import { Trash2Icon } from "lucide-react";
 import type { productMultimedia } from "@/lib/database/schema";
 import type { CSSProperties } from "react";
@@ -20,8 +21,9 @@ interface DraggableImageProps {
 export function DraggableImage({ productImage, invalidate }: DraggableImageProps) {
   const [open, setOpen] = useState(false);
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({ id: productImage.id });
+  const trpc = useTRPC();
 
-  const mutation = trpc.productMultimedia.delete.useMutation();
+  const mutation = useMutation(trpc.productMultimedia.delete.mutationOptions());
   const deleteMultimedia = useDeleteEntity({
     mutateAsync: () => mutation.mutateAsync({ id: productImage.id }),
     entityName: "product multimedia",

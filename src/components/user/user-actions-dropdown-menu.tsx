@@ -4,7 +4,8 @@ import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 import * as ActionsMenuCore from "@/components/actions-menu";
 import { authClient } from "@/lib/auth/auth-client";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
+import { useQueryClient } from "@tanstack/react-query";
 import { UserCog } from "lucide-react";
 import { DeleteConfirmationDialog } from "../delete-confirmation-dialog";
 import {
@@ -22,7 +23,8 @@ interface UserActionsDropdownMenuProps {
 export function UserActionsDropdownMenu({ id }: UserActionsDropdownMenuProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
   function deleteUser(userId: string) {
     startTransition(async () => {
@@ -32,8 +34,8 @@ export function UserActionsDropdownMenu({ id }: UserActionsDropdownMenuProps) {
         return;
       }
 
+      queryClient.invalidateQueries(trpc.user.getTable.queryFilter());
       toast.success("User deleted successfully");
-      utils.user.getTable.invalidate();
       setShowDeleteDialog(false);
     });
   }
@@ -46,8 +48,8 @@ export function UserActionsDropdownMenu({ id }: UserActionsDropdownMenuProps) {
         return;
       }
 
+      queryClient.invalidateQueries(trpc.user.getTable.queryFilter());
       toast.success("User role updated successfully");
-      utils.user.getTable.invalidate();
     });
   }
 

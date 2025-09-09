@@ -6,15 +6,18 @@ import { tryCatch } from "@/app/try-catch";
 import { BasicInfoForm, basicInfoSchema } from "@/components/product/basic-info-form";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { RecordInfoForm } from "./record-info-form";
 import type z from "zod";
 
 export function ProductCreateForm() {
   const router = useRouter();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
+
   const form = useForm<z.infer<typeof basicInfoSchema>>({
     resolver: zodResolver(basicInfoSchema),
     defaultValues: {
@@ -25,15 +28,15 @@ export function ProductCreateForm() {
     },
   });
 
-  const mutation = trpc.product.create.useMutation();
+  const mutation = useMutation(trpc.product.create.mutationOptions());
   async function onSubmit(input: z.infer<typeof basicInfoSchema>) {
     const { data: id, error } = await tryCatch(mutation.mutateAsync(input));
     if (error) {
       return toast.error("Failed to create product", { description: error.message });
     }
 
+    queryClient.invalidateQueries(trpc.product.getTable.queryFilter());
     toast.success("Product created successfully");
-    utils.product.getTable.invalidate();
     router.push(`/product/edit/${id}`);
   }
 

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import * as ActionsMenuCore from "@/components/actions-menu";
 import { useDeleteEntity } from "@/hooks/use-delete-entity";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { DeleteConfirmationDialog } from "../delete-confirmation-dialog";
 
 interface ProductActionsDropdownMenuProps {
@@ -10,12 +11,13 @@ interface ProductActionsDropdownMenuProps {
 
 export function ProductActionsDropdownMenu({ id }: ProductActionsDropdownMenuProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
 
-  const utils = trpc.useUtils();
-  const mutation = trpc.product.delete.useMutation();
+  const mutation = useMutation(trpc.product.delete.mutationOptions());
   const deleteProduct = useDeleteEntity({
     mutateAsync: () => mutation.mutateAsync({ id }),
-    invalidate: utils.product.getTable.invalidate,
+    invalidate: () => queryClient.invalidateQueries(trpc.product.getTable.queryFilter()),
     entityName: "product",
   });
 

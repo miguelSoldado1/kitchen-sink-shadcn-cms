@@ -4,18 +4,20 @@ import { DataTable } from "@/components/data-table/data-table";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
-import { useDataTable } from "@/hooks/use-data-table";
-import { trpc } from "@/lib/trpc/client";
+import { useDataTableConfig, useDataTableFromQuery } from "@/hooks/use-data-table-with-query";
+import { useTRPC } from "@/utils/trpc";
+import { useQuery } from "@tanstack/react-query";
 import { columns } from "./category-columns";
 
 export function CategoryTable() {
-  const { table, query } = useDataTable({
-    queryFn: (props) => {
-      return trpc.category.getTable.useQuery(props, { placeholderData: (previousData) => previousData });
-    },
+  const { queryParams, getTableConfig } = useDataTableConfig({
     initialState: { sorting: [{ id: "createdAt", desc: true }], columnPinning: { right: ["actions"] } },
     columns,
   });
+
+  const trpc = useTRPC();
+  const query = useQuery(trpc.category.getTable.queryOptions(queryParams, { placeholderData: (prev) => prev }));
+  const table = useDataTableFromQuery(getTableConfig, query.data);
 
   if (query.isPending && !query.isPlaceholderData) {
     return (

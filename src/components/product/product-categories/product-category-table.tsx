@@ -1,7 +1,8 @@
 "use client";
 
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
+import { useQuery } from "@tanstack/react-query";
 import { getCoreRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table";
 import { DataTable } from "../../data-table/data-table";
 import { DataTableSkeleton } from "../../data-table/data-table-skeleton";
@@ -13,7 +14,8 @@ interface ProductCategoriesTableProps {
 }
 
 export function ProductCategoryTable({ productId }: ProductCategoriesTableProps) {
-  const query = trpc.productCategory.getAll.useQuery({ productId });
+  const trpc = useTRPC();
+  const query = useQuery(trpc.productCategory.getAll.queryOptions({ productId }));
   const table = useReactTable({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),

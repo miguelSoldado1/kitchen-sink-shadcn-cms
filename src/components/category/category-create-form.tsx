@@ -5,7 +5,8 @@ import { toast } from "sonner";
 import { tryCatch } from "@/app/try-catch";
 import * as DialogCore from "@/components/ui/dialog";
 import { useCategoryForm } from "@/hooks/use-category-form";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { Form, FormField } from "../ui/form";
@@ -14,10 +15,11 @@ import { Input } from "../ui/input";
 import type { CategoryFormType } from "@/hooks/use-category-form";
 
 export function CategoryCreateForm() {
-  const mutation = trpc.category.create.useMutation();
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const mutation = useMutation(trpc.category.create.mutationOptions());
   const form = useCategoryForm({ defaultValues: { name: "" } });
   const [open, setOpen] = useState(false);
-  const utils = trpc.useUtils();
 
   async function onSubmit(data: CategoryFormType) {
     const { error } = await tryCatch(mutation.mutateAsync(data));
@@ -25,8 +27,8 @@ export function CategoryCreateForm() {
       return toast.error("Failed to create category", { description: error.message });
     }
 
+    queryClient.invalidateQueries(trpc.category.getTable.queryFilter());
     toast.success("Category created successfully");
-    utils.category.getTable.invalidate();
     setOpen(false);
     form.reset();
   }

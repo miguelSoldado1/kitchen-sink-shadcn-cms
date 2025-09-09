@@ -3,7 +3,8 @@
 import React from "react";
 import { toast } from "sonner";
 import { tryCatch } from "@/app/try-catch";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -12,9 +13,11 @@ interface PublishProductButtonProps {
 }
 
 export function PublishProductButton({ id }: PublishProductButtonProps) {
-  const query = trpc.product.getFirst.useQuery({ id });
-  const publishMutation = trpc.product.publish.useMutation();
-  const unpublishMutation = trpc.product.unpublish.useMutation();
+  const trpc = useTRPC();
+
+  const query = useQuery(trpc.product.getFirst.queryOptions({ id }));
+  const publishMutation = useMutation(trpc.product.publish.mutationOptions());
+  const unpublishMutation = useMutation(trpc.product.unpublish.mutationOptions());
 
   const isPublished = query.data?.published;
   const isLoading = query.isPending || publishMutation.isPending || unpublishMutation.isPending;

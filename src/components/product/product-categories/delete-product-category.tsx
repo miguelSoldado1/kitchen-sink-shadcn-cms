@@ -4,7 +4,8 @@ import { tryCatch } from "@/app/try-catch";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TrashIcon } from "lucide-react";
 
 interface DeleteProductCategoryProps {
@@ -13,8 +14,10 @@ interface DeleteProductCategoryProps {
 
 export function DeleteProductCategory({ id }: DeleteProductCategoryProps) {
   const [open, setOpen] = useState(false);
-  const mutation = trpc.productCategory.delete.useMutation();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
+
+  const mutation = useMutation(trpc.productCategory.delete.mutationOptions());
 
   async function handleDelete() {
     const { error } = await tryCatch(mutation.mutateAsync({ id }));
@@ -22,8 +25,8 @@ export function DeleteProductCategory({ id }: DeleteProductCategoryProps) {
       return toast.error("Failed to delete product category", { description: error.message });
     }
 
+    queryClient.invalidateQueries(trpc.productCategory.getAll.queryFilter());
     toast.success("Product category deleted successfully");
-    utils.productCategory.getAll.invalidate();
   }
 
   return (

@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import * as DialogCore from "@/components/ui/dialog";
 import { authClient } from "@/lib/auth/auth-client";
-import { trpc } from "@/lib/trpc/client";
+import { useTRPC } from "@/utils/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -25,7 +26,8 @@ const createUserFormSchema = z.object({
 
 export function UserCreateForm() {
   const [open, setOpen] = useState(false);
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
+  const trpc = useTRPC();
   const form = useForm<z.infer<typeof createUserFormSchema>>({
     resolver: zodResolver(createUserFormSchema),
     defaultValues: {
@@ -40,8 +42,8 @@ export function UserCreateForm() {
       return toast.error("Failed to create user", { description: error.message });
     }
 
+    queryClient.invalidateQueries(trpc.user.getTable.queryFilter());
     toast.success("User created successfully");
-    utils.user.getTable.invalidate();
     setOpen(false);
     form.reset();
   }
