@@ -4,20 +4,17 @@ import { DataTable } from "@/components/data-table/data-table";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
-import { useDataTableConfig, useDataTableFromQuery } from "@/hooks/use-data-table-with-query";
+import { useQueryTable } from "@/hooks/use-query-table";
 import { useTRPC } from "@/utils/trpc";
-import { useQuery } from "@tanstack/react-query";
 import { columns } from "./product-columns";
 
 export function ProductTable() {
-  const { queryParams, getTableConfig } = useDataTableConfig({
+  const trpc = useTRPC();
+  const { table, query } = useQueryTable({
+    queryOptions: (params) => trpc.product.getTable.queryOptions(params, { placeholderData: (prev) => prev }),
     initialState: { sorting: [{ id: "createdAt", desc: true }], columnPinning: { right: ["actions"] } },
     columns,
   });
-
-  const trpc = useTRPC();
-  const query = useQuery(trpc.product.getTable.queryOptions(queryParams, { placeholderData: (prev) => prev }));
-  const table = useDataTableFromQuery(getTableConfig, query.data);
 
   if (query.isPending && !query.isPlaceholderData) {
     return (
