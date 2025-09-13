@@ -48,11 +48,8 @@ export function SignInForm() {
           <span className="sr-only">Acme Inc.</span>
         </a>
         <h1 className="text-xl font-bold">Welcome to Acme Inc.</h1>
-        <div className="text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <a href="/sign-up" className="underline underline-offset-4">
-            Sign up
-          </a>
+        <div className="text-muted-foreground text-center text-sm">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum.
         </div>
       </div>
       <Form {...form}>
