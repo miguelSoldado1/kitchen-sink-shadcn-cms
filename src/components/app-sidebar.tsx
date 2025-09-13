@@ -16,10 +16,10 @@ import { GalleryVerticalEndIcon } from "lucide-react";
 import type { NavigationItem } from "@/components/nav-main";
 
 interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  navigationData?: NavigationItem[];
+  navigationData: NavigationItem[];
 }
 
-export function AppSidebar({ navigationData = [], ...props }: AppSidebarProps) {
+export function AppSidebar({ navigationData, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>

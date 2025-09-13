@@ -10,6 +10,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth/auth-client";
 import clsx from "clsx";
 import { ChevronRight } from "lucide-react";
@@ -40,8 +41,18 @@ function canAccessItem(item: NavigationItem, userRole?: string | null): boolean 
 }
 
 export function NavMain({ items }: NavMainProps) {
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
   const pathname = usePathname();
+
+  if (isPending) {
+    return (
+      <SidebarMenu className="p-2">
+        {items.map((_item, idx) => (
+          <Skeleton key={idx} className="h-8 w-full rounded-lg" />
+        ))}
+      </SidebarMenu>
+    );
+  }
 
   return (
     <SidebarMenu className="p-2">
