@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import { tryCatch } from "@/app/try-catch";
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { trpc } from "@/lib/trpc/client";
+import { tryCatch } from "@/try-catch";
 import { TrashIcon } from "lucide-react";
 
 interface DeleteProductCategoryProps {

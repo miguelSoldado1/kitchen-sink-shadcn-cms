@@ -2,8 +2,8 @@
 
 import React from "react";
 import { toast } from "sonner";
-import { tryCatch } from "@/app/try-catch";
 import { trpc } from "@/lib/trpc/client";
+import { tryCatch } from "@/try-catch";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { Button } from "../ui/button";
 

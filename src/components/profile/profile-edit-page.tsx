@@ -3,7 +3,6 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { tryCatch } from "@/app/try-catch";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth/auth-client";
+import { tryCatch } from "@/try-catch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { KeyRoundIcon, TrashIcon, UserIcon } from "lucide-react";
 import { useForm } from "react-hook-form";

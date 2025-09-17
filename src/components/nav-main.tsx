@@ -48,7 +48,7 @@ export function NavMain({ items }: NavMainProps) {
     return (
       <SidebarMenu className="p-2">
         {items.map((_item, idx) => (
-          <Skeleton key={idx} className="h-8 w-full rounded-lg" />
+          <Skeleton key={idx} className="my-1 h-6 w-full rounded-lg" />
         ))}
       </SidebarMenu>
     );

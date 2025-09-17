@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { toast } from "sonner";
-import { tryCatch } from "@/app/try-catch";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,6 +16,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc/client";
+import { tryCatch } from "@/try-catch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
