@@ -8,7 +8,7 @@ const TITLE = "Users";
 const DESCRIPTION = "Manage and view all your users in one place.";
 
 export default async function UsersPage() {
-  await checkReadPermission("/user");
+  await checkReadPermission("/sign-in");
 
   return (
     <PageLayout>

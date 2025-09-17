@@ -10,7 +10,7 @@ const TITLE = "Products";
 const DESCRIPTION = "Manage and view all your products in one place.";
 
 export default async function ProductPage() {
-  await checkReadPermission("/product");
+  await checkReadPermission("/sign-in");
 
   return (
     <PageLayout>

@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { tryCatch } from "@/app/try-catch";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/lib/trpc/client";
-import { tryCatch } from "@/try-catch";
 import { useUploadFiles } from "better-upload/client";
 import { UploadWithCropper } from "../../upload-with-cropper";
 import { DragAndDropMedia } from "./drag-and-drop-media";

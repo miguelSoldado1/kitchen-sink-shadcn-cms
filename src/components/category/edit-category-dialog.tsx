@@ -1,10 +1,10 @@
 "use client";
 
 import { toast } from "sonner";
+import { tryCatch } from "@/app/try-catch";
 import * as DialogCore from "@/components/ui/dialog";
 import { useCategoryForm } from "@/hooks/use-category-form";
 import { trpc } from "@/lib/trpc/client";
-import { tryCatch } from "@/try-catch";
 import { Button } from "../ui/button";
 import { Form, FormField } from "../ui/form";
 import { FormItemWrapper } from "../ui/form-item-wrapper";

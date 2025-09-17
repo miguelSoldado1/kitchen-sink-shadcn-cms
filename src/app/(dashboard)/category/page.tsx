@@ -8,7 +8,7 @@ const TITLE = "Categories";
 const DESCRIPTION = "Manage and view all your categories in one place.";
 
 export default async function CategoryPage() {
-  await checkReadPermission("/category");
+  await checkReadPermission("/sign-in");
 
   return (
     <PageLayout>

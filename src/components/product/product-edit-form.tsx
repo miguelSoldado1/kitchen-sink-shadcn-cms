@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { tryCatch } from "@/app/try-catch";
 import { BasicInfoForm, basicInfoSchema } from "@/components/product/basic-info-form";
 import { ProductCategoryTable } from "@/components/product/product-categories/product-category-table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc/client";
-import { tryCatch } from "@/try-catch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { ProductMultimedia } from "./product-multimedia/product-multimedia";
