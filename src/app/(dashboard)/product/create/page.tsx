@@ -4,7 +4,7 @@ import { ProductCreateForm } from "@/components/product/product-create-form";
 import { checkWritePermission } from "@/server/auth-permissions";
 
 const TITLE = "Create Product";
-const DESCRIPTION = "Add a new product to your inventory.";
+const DESCRIPTION = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur gravida dignissim scelerisque.";
 
 export default async function CreateProductPage() {
   await checkWritePermission("/product");

@@ -17,6 +17,7 @@ export function PasswordInput({ className, disabled, ref, ...props }: JSX.Intrin
         type={showPassword ? "text" : "password"}
         className={cn("hide-password-toggle pr-10", className)}
         autoComplete="current-password"
+        disabled={disabled}
         ref={ref}
       />
       <Button

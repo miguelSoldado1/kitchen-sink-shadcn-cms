@@ -5,7 +5,7 @@ import { PageHeader, PageLayout } from "@/components/page-layout";
 import { checkReadPermission } from "@/server/auth-permissions";
 
 const TITLE = "Categories";
-const DESCRIPTION = "Manage and view all your categories in one place.";
+const DESCRIPTION = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur gravida dignissim scelerisque.";
 
 export default async function CategoryPage() {
   await checkReadPermission("/sign-in");

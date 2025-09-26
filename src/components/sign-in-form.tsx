@@ -59,7 +59,7 @@ export function SignInForm() {
             name="email"
             render={({ field }) => (
               <FormItemWrapper label="Email">
-                <Input {...field} type="email" placeholder="email@acme.com" />
+                <Input {...field} type="email" placeholder="email@acme.com" disabled={form.formState.isSubmitting} />
               </FormItemWrapper>
             )}
           />
@@ -68,7 +68,7 @@ export function SignInForm() {
             name="password"
             render={({ field }) => (
               <FormItemWrapper label="Password">
-                <PasswordInput {...field} placeholder="***********" />
+                <PasswordInput {...field} placeholder="***********" disabled={form.formState.isSubmitting} />
               </FormItemWrapper>
             )}
           />

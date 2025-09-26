@@ -5,7 +5,7 @@ import { UserTable } from "@/components/user/user-table";
 import { checkReadPermission } from "@/server/auth-permissions";
 
 const TITLE = "Users";
-const DESCRIPTION = "Manage and view all your users in one place.";
+const DESCRIPTION = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur gravida dignissim scelerisque.";
 
 export default async function UsersPage() {
   await checkReadPermission("/sign-in");

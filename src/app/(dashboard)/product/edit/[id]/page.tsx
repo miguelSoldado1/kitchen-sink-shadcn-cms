@@ -8,7 +8,7 @@ import { checkWritePermission } from "@/server/auth-permissions";
 import z from "zod";
 
 const TITLE = "Edit Product";
-const DESCRIPTION = "Edit an existing product in your inventory.";
+const DESCRIPTION = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur gravida dignissim scelerisque.";
 
 interface EditProductPageProps {
   params: Promise<{ id: string }>;

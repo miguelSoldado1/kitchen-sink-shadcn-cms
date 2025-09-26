@@ -1,7 +1,7 @@
 import Link from "next/link";
 import * as DropdownMenuCore from "@/components/ui/dropdown-menu";
 import clsx from "clsx";
-import { EditIcon, EllipsisIcon, TrashIcon } from "lucide-react";
+import { DownloadIcon, EditIcon, EllipsisIcon, TrashIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import type { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
@@ -31,6 +31,15 @@ export function ActionsMenuEditItemButton(props: React.ComponentProps<typeof Dro
     <DropdownMenuCore.DropdownMenuItem {...props}>
       <EditIcon className="size-4" />
       Edit
+    </DropdownMenuCore.DropdownMenuItem>
+  );
+}
+
+export function ActionsMenuDownloadButton({ className, ...props }: React.ComponentProps<typeof DropdownMenuItem>) {
+  return (
+    <DropdownMenuCore.DropdownMenuItem className={clsx("cursor-pointer", className)} {...props}>
+      <DownloadIcon className="size-4" />
+      Download
     </DropdownMenuCore.DropdownMenuItem>
   );
 }

@@ -7,7 +7,7 @@ import { checkReadPermission } from "@/server/auth-permissions";
 import { Plus } from "lucide-react";
 
 const TITLE = "Products";
-const DESCRIPTION = "Manage and view all your products in one place.";
+const DESCRIPTION = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur gravida dignissim scelerisque.";
 
 export default async function ProductPage() {
   await checkReadPermission("/sign-in");
