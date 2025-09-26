@@ -13,6 +13,7 @@ const SORT_COLUMNS = {
 } as const;
 
 const FILTER_COLUMNS = {
+  id: schema.category.id,
   name: schema.category.name,
   createdAt: schema.category.createdAt,
   updatedAt: schema.category.updatedAt,
@@ -23,6 +24,7 @@ const CONFIG: TableQueryConfig<typeof SORT_COLUMNS, typeof FILTER_COLUMNS> = {
   filterColumns: FILTER_COLUMNS,
   dateColumns: new Set(["createdAt", "updatedAt"]),
   textColumns: new Set(["name"]),
+  numberColumns: new Set(["id"]),
 } as const;
 
 async function getTableHandler(input: z.infer<typeof getTableDataInput>) {

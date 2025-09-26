@@ -1,4 +1,4 @@
-import { and, asc, desc, gte, ilike, lte, or } from "drizzle-orm";
+import { and, asc, desc, eq, gte, ilike, lte, or } from "drizzle-orm";
 import z from "zod";
 import type { SQL } from "drizzle-orm";
 import type { PgColumn } from "drizzle-orm/pg-core";
@@ -12,6 +12,7 @@ export interface TableQueryConfig<
   dateColumns?: Set<string>;
   textColumns?: Set<string>;
   rangeColumns?: Set<string>;
+  numberColumns?: Set<string>;
 }
 
 export interface TableQueryInput {
@@ -61,7 +62,7 @@ export function buildFilterConditions<T extends Record<string, PgColumn>>(
   filters: Record<string, string | number | (string | number)[]>,
   config: Pick<
     TableQueryConfig<Record<string, PgColumn>, T>,
-    "filterColumns" | "dateColumns" | "textColumns" | "rangeColumns"
+    "filterColumns" | "dateColumns" | "textColumns" | "rangeColumns" | "numberColumns"
   >,
 ): SQL<unknown>[] {
   const whereConditions: SQL<unknown>[] = [];
@@ -72,8 +73,15 @@ export function buildFilterConditions<T extends Record<string, PgColumn>>(
 
     let condition: SQL<unknown> | null = null;
 
-    // Check if it's a date column
-    if (config.dateColumns?.has(key)) {
+    // Check if it's a number column
+    if (config.numberColumns?.has(key)) {
+      if (Array.isArray(value)) {
+        const conditions = value.map((v) => eq(column, v));
+        condition = conditions.length > 0 ? or(...conditions)! : null;
+      } else {
+        condition = eq(column, value);
+      }
+    } else if (config.dateColumns?.has(key)) {
       // Handle date columns
       if (Array.isArray(value)) {
         const conditions = value
@@ -108,7 +116,7 @@ export function buildFilterConditions<T extends Record<string, PgColumn>>(
         }
       }
     } else {
-      // Handle text/number columns
+      // Handle text columns
       if (Array.isArray(value)) {
         const conditions = value.map((v) => ilike(column, `%${String(v)}%`));
         condition = conditions.length > 0 ? or(...conditions)! : null;

@@ -1,10 +1,9 @@
 import { formatDate } from "@/lib/format";
 import { DataTableColumnHeader } from "../data-table/data-table-column-header";
-import { CategoryActionsDropdownMenu } from "./category-actions-dropdown-menu";
-import type { category } from "@/lib/database/schema";
+import type { productBundle } from "@/lib/database/schema";
 import type { ColumnDef } from "@tanstack/react-table";
 
-export const columns: ColumnDef<typeof category.$inferSelect>[] = [
+export const columns: ColumnDef<typeof productBundle.$inferSelect>[] = [
   {
     id: "id",
     accessorKey: "id",
@@ -14,20 +13,32 @@ export const columns: ColumnDef<typeof category.$inferSelect>[] = [
       variant: "number",
       placeholder: "Search id…",
     },
-    enableSorting: false,
+    enableSorting: true,
     enableColumnFilter: true,
   },
   {
-    id: "name",
-    accessorKey: "name",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
-    meta: {
-      label: "Name",
-      variant: "text",
-      placeholder: "Search name…",
-    },
+    id: "primaryProductId",
+    accessorKey: "primaryProductId",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Primary Product Id" />,
     enableSorting: false,
-    enableColumnFilter: true,
+  },
+  {
+    id: "primaryProductName",
+    accessorKey: "primaryProductName",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Primary Product Name" />,
+    enableSorting: false,
+  },
+  {
+    id: "bundledProductId",
+    accessorKey: "bundledProductId",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Bundled Product Id" />,
+    enableSorting: false,
+  },
+  {
+    id: "bundledProductName",
+    accessorKey: "bundledProductName",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Bundled Product Name" />,
+    enableSorting: false,
   },
   {
     id: "createdAt",
@@ -52,12 +63,5 @@ export const columns: ColumnDef<typeof category.$inferSelect>[] = [
     },
     enableSorting: true,
     enableColumnFilter: true,
-  },
-  {
-    id: "actions",
-    cell({ row }) {
-      return <CategoryActionsDropdownMenu id={row.original.id} />;
-    },
-    size: 20,
   },
 ];
