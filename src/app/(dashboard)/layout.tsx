@@ -3,7 +3,7 @@
 import React from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { PackageOpenIcon, TagIcon, UsersRoundIcon } from "lucide-react";
+import { FolderIcon, PackageOpenIcon, TagIcon, UsersRoundIcon } from "lucide-react";
 import Provider from "../../lib/trpc/provider";
 import type { NavigationItem } from "@/components/nav-main";
 
@@ -23,6 +23,11 @@ const navigationData: NavigationItem[] = [
     url: "/user",
     roleAccess: "admin",
     icon: UsersRoundIcon,
+  },
+  {
+    title: "Files",
+    url: "/file",
+    icon: FolderIcon,
   },
 ];
 
